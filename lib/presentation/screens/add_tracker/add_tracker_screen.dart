@@ -81,7 +81,7 @@ class _AddTrackerScreenState extends ConsumerState<AddTrackerScreen> {
     );
 
     await ref.read(trackerRepositoryProvider).insert(tracker);
-    if (mounted) context.go('/dashboard');
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override

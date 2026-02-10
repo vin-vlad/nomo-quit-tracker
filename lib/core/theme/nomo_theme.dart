@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'nomo_colors.dart';
 import 'nomo_dimensions.dart';
@@ -17,7 +18,7 @@ class NomoTheme {
     return ThemeData(
       brightness: brightness,
       useMaterial3: true,
-      fontFamily: 'Jost',
+      fontFamily: 'NotoSans',
 
       // ── Colors ────────────────────────────────────────────────────
       colorScheme: ColorScheme(
@@ -169,6 +170,21 @@ class NomoTheme {
         color: colors.border,
         thickness: NomoDimensions.dividerWidth,
         space: 0,
+      ),
+
+      // ── Page transitions (shared axis vertical for push/pop) ──
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+            transitionType: SharedAxisTransitionType.vertical,
+          ),
+          TargetPlatform.iOS: SharedAxisPageTransitionsBuilder(
+            transitionType: SharedAxisTransitionType.vertical,
+          ),
+          TargetPlatform.macOS: SharedAxisPageTransitionsBuilder(
+            transitionType: SharedAxisTransitionType.vertical,
+          ),
+        },
       ),
 
       // Disable Material splash/ripple for a Bauhaus feel.
