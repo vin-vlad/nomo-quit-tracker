@@ -38,13 +38,16 @@ class NomoColorPalette {
       primary: primary,
       secondary: secondary,
       accent: accent,
+      // Slightly soft, low-glare dark surfaces inspired by Material dark.
       background: const Color(0xFF121212),
-      surface: const Color(0xFF1E1E1E),
-      onBackground: const Color(0xFFFAFAF8),
-      onSurface: const Color(0xFFE0E0E0),
+      surface: const Color(0xFF1B1B1B),
+      // Warm off-whites for more comfortable reading at night.
+      onBackground: const Color(0xFFE8E4DF),
+      onSurface: const Color(0xFFCFCBC6),
       error: error,
-      border: const Color(0xFFFAFAF8),
-      shadow: const Color(0xFF000000),
+      // Subtle borders that separate surfaces without harsh white lines.
+      border: const Color(0xFF3A3A3A),
+      shadow: const Color(0xCC000000),
     );
   }
 

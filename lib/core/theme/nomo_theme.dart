@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'nomo_colors.dart';
 import 'nomo_dimensions.dart';
@@ -11,13 +12,14 @@ class NomoTheme {
   NomoTheme._();
 
   static ThemeData build(NomoColorPalette palette, Brightness brightness) {
-    final colors = brightness == Brightness.dark ? palette.toDark() : palette;
+    final isDark = brightness == Brightness.dark;
+    final colors = isDark ? palette.toDark() : palette;
     final textTheme = NomoTypography.textTheme(colors.onBackground);
 
     return ThemeData(
       brightness: brightness,
       useMaterial3: true,
-      fontFamily: 'Jost',
+      fontFamily: 'NotoSans',
 
       // ── Colors ────────────────────────────────────────────────────
       colorScheme: ColorScheme(
@@ -132,7 +134,9 @@ class NomoTheme {
         ),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(
-            color: colors.border.withValues(alpha: 0.4),
+            // Make borders a bit more visible in dark mode while
+            // staying subtle in light mode.
+            color: colors.border.withValues(alpha: isDark ? 0.6 : 0.4),
             width: NomoDimensions.borderWidth,
           ),
         ),
@@ -144,7 +148,8 @@ class NomoTheme {
         ),
         labelStyle: NomoTypography.caption.copyWith(color: colors.onSurface),
         hintStyle: NomoTypography.body.copyWith(
-          color: colors.onSurface.withValues(alpha: 0.5),
+          // Slightly stronger hint contrast in dark mode for legibility.
+          color: colors.onSurface.withValues(alpha: isDark ? 0.7 : 0.5),
         ),
         contentPadding: const EdgeInsets.symmetric(
           vertical: NomoDimensions.spacing12,
@@ -155,7 +160,9 @@ class NomoTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colors.surface,
         selectedItemColor: colors.primary,
-        unselectedItemColor: colors.onSurface.withValues(alpha: 0.5),
+        // Unselected items stay readable in dark mode.
+        unselectedItemColor:
+            colors.onSurface.withValues(alpha: isDark ? 0.7 : 0.5),
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         selectedLabelStyle: NomoTypography.caption.copyWith(
@@ -166,9 +173,25 @@ class NomoTheme {
 
       // ── Misc ──────────────────────────────────────────────────────
       dividerTheme: DividerThemeData(
-        color: colors.border,
+        // Soften dividers in dark mode to avoid high-contrast lines.
+        color: isDark ? colors.border.withValues(alpha: 0.7) : colors.border,
         thickness: NomoDimensions.dividerWidth,
         space: 0,
+      ),
+
+      // ── Page transitions (shared axis vertical for push/pop) ──
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+            transitionType: SharedAxisTransitionType.vertical,
+          ),
+          TargetPlatform.iOS: SharedAxisPageTransitionsBuilder(
+            transitionType: SharedAxisTransitionType.vertical,
+          ),
+          TargetPlatform.macOS: SharedAxisPageTransitionsBuilder(
+            transitionType: SharedAxisTransitionType.vertical,
+          ),
+        },
       ),
 
       // Disable Material splash/ripple for a Bauhaus feel.

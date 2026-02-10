@@ -22,34 +22,83 @@ dependencies:
   intl: ^0.20.1
   shared_preferences: ^2.3.4
   flutter_animate: ^4.5.2
-  google_fonts: ^6.2.1
+  animations: ^2.0.11
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
   drift_dev: ^2.23.1
   build_runner: ^2.4.14
   riverpod_generator: ^2.6.3
   riverpod_lint: ^2.6.3
 
+flutter_launcher_icons:
+  image_path: assets/icons/icon_white.png
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  min_sdk_android: 21
+
 flutter:
   uses-material-design: true
 
   fonts:
-    - family: Jost
+    - family: NotoSans
       fonts:
-        - asset: assets/fonts/Jost/Jost-Regular.ttf
+        - asset: assets/fonts/NotoSans/NotoSans-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/NotoSans/NotoSans-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/NotoSans/NotoSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/NotoSans/NotoSans-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Jost/Jost-Medium.ttf
+        - asset: assets/fonts/NotoSans/NotoSans-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Jost/Jost-SemiBold.ttf
+        - asset: assets/fonts/NotoSans/NotoSans-SemiBold.ttf
           weight: 600
-        - asset: assets/fonts/Jost/Jost-Bold.ttf
+        - asset: assets/fonts/NotoSans/NotoSans-Bold.ttf
           weight: 700
-    - family: SpaceMono
-      fonts:
-        - asset: assets/fonts/SpaceMono/SpaceMono-Regular.ttf
+        - asset: assets/fonts/NotoSans/NotoSans-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/NotoSans/NotoSans-Black.ttf
+          weight: 900
+        - asset: assets/fonts/NotoSans/NotoSans-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-Italic.ttf
           weight: 400
-        - asset: assets/fonts/SpaceMono/SpaceMono-Bold.ttf
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/NotoSans/NotoSans-BlackItalic.ttf
+          weight: 900
+          style: italic
+    - family: NotoSansCondensed
+      fonts:
+        - asset: assets/fonts/NotoSans/NotoSans_Condensed-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSans/NotoSans_Condensed-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSans/NotoSans_Condensed-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/NotoSans/NotoSans_Condensed-Bold.ttf
           weight: 700

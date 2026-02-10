@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,7 +8,9 @@ import '../../../core/theme/nomo_typography.dart';
 import '../../providers/database_provider.dart';
 import '../../providers/tracker_providers.dart';
 import '../../providers/purchase_providers.dart';
+import '../add_tracker/add_tracker_screen.dart';
 import '../craving/log_craving_sheet.dart';
+import '../tracker_detail/tracker_detail_screen.dart';
 import 'widgets/tracker_card_widget.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -83,12 +86,25 @@ class DashboardScreen extends ConsumerWidget {
                       ? NomoDimensions.spacing16
                       : 0,
                 ),
-                child: TrackerCardWidget(
-                  tracker: tracker,
-                  onTap: () =>
-                      context.go('/dashboard/tracker/${tracker.id}'),
-                  onLogCraving: () =>
-                      _showCravingSheet(context, ref, tracker.id),
+                child: OpenContainer(
+                  closedElevation: 0,
+                  openElevation: 0,
+                  closedColor: Colors.transparent,
+                  openColor: theme.scaffoldBackgroundColor,
+                  transitionDuration: const Duration(milliseconds: 500),
+                  closedShape: const RoundedRectangleBorder(),
+                  tappable: false,
+                  closedBuilder: (closedCtx, openContainer) {
+                    return TrackerCardWidget(
+                      tracker: tracker,
+                      onTap: openContainer,
+                      onLogCraving: () =>
+                          _showCravingSheet(context, ref, tracker.id),
+                    );
+                  },
+                  openBuilder: (openCtx, _) {
+                    return TrackerDetailScreen(trackerId: tracker.id);
+                  },
                 ),
               );
             },
@@ -99,21 +115,38 @@ class DashboardScreen extends ConsumerWidget {
           child: Text('Error loading trackers: $e'),
         ),
       ),
-      floatingActionButton: GestureDetector(
-        onTap: () => _addTracker(context, ref),
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primary,
-            borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
-            border: Border.all(
-              color: theme.colorScheme.onSurface,
-              width: NomoDimensions.borderWidth,
-            ),
-          ),
-          child: const Icon(Icons.add, color: Colors.white, size: 28),
+      floatingActionButton: OpenContainer(
+        closedElevation: 0,
+        openElevation: 0,
+        closedColor: Colors.transparent,
+        openColor: theme.scaffoldBackgroundColor,
+        transitionDuration: const Duration(milliseconds: 500),
+        closedShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
         ),
+        tappable: false,
+        closedBuilder: (closedCtx, openContainer) {
+          return GestureDetector(
+            onTap: () => _addTracker(closedCtx, ref, openContainer),
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius:
+                    BorderRadius.circular(NomoDimensions.borderRadius),
+                border: Border.all(
+                  color: theme.colorScheme.onSurface,
+                  width: NomoDimensions.borderWidth,
+                ),
+              ),
+              child: const Icon(Icons.add, color: Colors.white, size: 28),
+            ),
+          );
+        },
+        openBuilder: (openCtx, _) {
+          return const AddTrackerScreen();
+        },
       ),
     );
   }
@@ -161,7 +194,11 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  void _addTracker(BuildContext context, WidgetRef ref) async {
+  void _addTracker(
+    BuildContext context,
+    WidgetRef ref,
+    VoidCallback openContainer,
+  ) async {
     final isPremium = ref.read(isPremiumSyncProvider);
     final count = await ref.read(trackerRepositoryProvider).countActive();
 
@@ -170,7 +207,7 @@ class DashboardScreen extends ConsumerWidget {
       return;
     }
 
-    if (context.mounted) context.go('/dashboard/add');
+    openContainer();
   }
 
   void _showCravingSheet(
