@@ -107,7 +107,7 @@ class InsightsScreen extends ConsumerWidget {
 
                     // Insights content for selected tracker
                     Expanded(
-                      child: _InsightsContent(trackerId: selectedTracker.id),
+                      child: InsightsContent(trackerId: selectedTracker.id),
                     ),
                   ],
                 );
@@ -297,10 +297,10 @@ class _TrackerSelector extends StatelessWidget {
   }
 }
 
-class _InsightsContent extends ConsumerWidget {
+class InsightsContent extends ConsumerWidget {
   final String trackerId;
 
-  const _InsightsContent({required this.trackerId});
+  const InsightsContent({super.key, required this.trackerId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -17,17 +17,14 @@ class BauhausTabs {
   BauhausTabs._();
 
   static const home = BauhausTabItem(label: 'Home', shape: _TabShape.circle);
-  static const insights =
-      BauhausTabItem(label: 'Insights', shape: _TabShape.square);
   static const achievements =
       BauhausTabItem(label: 'Awards', shape: _TabShape.triangle);
   static const settings =
       BauhausTabItem(label: 'Settings', shape: _TabShape.gear);
 
   static const List<BauhausTabItem> all = [
-    home,
-    insights,
     achievements,
+    home,
     settings,
   ];
 }

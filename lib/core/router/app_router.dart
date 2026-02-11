@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../presentation/screens/onboarding/onboarding_screen.dart';
 import '../../presentation/screens/dashboard/dashboard_screen.dart';
-import '../../presentation/screens/insights/insights_screen.dart';
-import '../../presentation/screens/insights/full_calendar_screen.dart';
+import '../../presentation/screens/insights/tracker_insights_screen.dart';
 import '../../presentation/screens/achievements/achievements_screen.dart';
 import '../../presentation/screens/settings/settings_screen.dart';
 import '../../presentation/screens/tracker_detail/tracker_detail_screen.dart';
@@ -114,7 +113,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           );
         },
         branches: [
-          // Tab 0: Dashboard
+          // Tab 0: Achievements (Awards)
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/achievements',
+                builder: (context, state) => const AchievementsScreen(),
+              ),
+            ],
+          ),
+          // Tab 1: Dashboard (Home)
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -126,6 +134,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => TrackerDetailScreen(
                       trackerId: state.pathParameters['id']!,
                     ),
+                    routes: [
+                      GoRoute(
+                        path: 'insights',
+                        builder: (context, state) => TrackerInsightsScreen(
+                          trackerId: state.pathParameters['id']!,
+                        ),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'add',
@@ -135,34 +151,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Tab 1: Insights
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/insights',
-                builder: (context, state) => const InsightsScreen(),
-                routes: [
-                  GoRoute(
-                    path: 'calendar',
-                    builder: (context, state) => FullCalendarScreen(
-                      trackerId:
-                          state.uri.queryParameters['trackerId']!,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          // Tab 2: Achievements
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/achievements',
-                builder: (context, state) => const AchievementsScreen(),
-              ),
-            ],
-          ),
-          // Tab 3: Settings
+          // Tab 2: Settings
           StatefulShellBranch(
             routes: [
               GoRoute(

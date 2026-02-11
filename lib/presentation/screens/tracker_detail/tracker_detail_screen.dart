@@ -1,6 +1,8 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/theme/nomo_dimensions.dart';
 import '../../../core/theme/nomo_typography.dart';
@@ -17,6 +19,7 @@ import '../../widgets/bauhaus_button.dart';
 import '../../widgets/bauhaus_card.dart';
 import '../../widgets/bauhaus_progress_ring.dart';
 import '../craving/log_craving_sheet.dart';
+import '../insights/tracker_insights_screen.dart';
 
 class TrackerDetailScreen extends ConsumerWidget {
   final String trackerId;
@@ -97,6 +100,111 @@ class TrackerDetailScreen extends ConsumerWidget {
                       ),
                     ),
                   ],
+                ),
+
+                const SizedBox(height: NomoDimensions.spacing32),
+
+                // Insights section
+                Text(
+                  'INSIGHTS',
+                  style: NomoTypography.label.copyWith(
+                    color:
+                        theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+                const SizedBox(height: NomoDimensions.spacing12),
+                OpenContainer(
+                  closedElevation: 0,
+                  openElevation: 0,
+                  closedColor: Colors.transparent,
+                  openColor: theme.scaffoldBackgroundColor,
+                  transitionDuration: const Duration(milliseconds: 500),
+                  closedShape: const RoundedRectangleBorder(),
+                  tappable: false,
+                  closedBuilder: (closedCtx, openContainer) {
+                    return GestureDetector(
+                      onTap: () {
+                        if (isPremium) {
+                          openContainer();
+                        } else {
+                          context.push('/paywall');
+                        }
+                      },
+                      child: BauhausCard(
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary
+                                    .withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(
+                                  NomoDimensions.borderRadius / 2,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.bar_chart,
+                                color: theme.colorScheme.primary,
+                                size: 22,
+                              ),
+                            ),
+                            const SizedBox(width: NomoDimensions.spacing12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'View Insights',
+                                    style: NomoTypography.titleSmall.copyWith(
+                                      color: theme.colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Craving trends, peak hours & calendar',
+                                    style: NomoTypography.caption.copyWith(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.6),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (!isPremium)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'PRO',
+                                  style: NomoTypography.caption.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 10,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ),
+                            if (isPremium)
+                              Icon(
+                                Icons.chevron_right,
+                                color: theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.4),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  openBuilder: (openCtx, _) {
+                    return TrackerInsightsScreen(trackerId: tracker.id);
+                  },
                 ),
 
                 const SizedBox(height: NomoDimensions.spacing32),
