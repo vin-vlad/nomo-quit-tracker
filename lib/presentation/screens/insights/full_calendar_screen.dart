@@ -68,8 +68,8 @@ class _FullCalendarScreenState extends ConsumerState<FullCalendarScreen> {
             color: theme.scaffoldBackgroundColor,
             border: Border(
               bottom: BorderSide(
-                color: theme.colorScheme.onSurface,
-                width: NomoDimensions.borderWidth,
+                color: theme.dividerColor,
+                width: NomoDimensions.dividerWidth,
               ),
             ),
           ),
@@ -85,16 +85,15 @@ class _FullCalendarScreenState extends ConsumerState<FullCalendarScreen> {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(
-                      Icons.arrow_back,
-                      color: theme.colorScheme.onSurface,
+                      Icons.arrow_back_ios_new_rounded,
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                   const SizedBox(width: NomoDimensions.spacing4),
                   Text(
-                    'CALENDAR',
-                    style: NomoTypography.headline.copyWith(
+                    'Calendar',
+                    style: NomoTypography.title.copyWith(
                       color: theme.colorScheme.onSurface,
-                      letterSpacing: 3,
                     ),
                   ),
                 ],
@@ -232,7 +231,7 @@ class _MonthNavigator extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final monthLabel =
-        DateFormat('MMMM yyyy').format(currentMonth).toUpperCase();
+        DateFormat('MMMM yyyy').format(currentMonth);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -245,7 +244,6 @@ class _MonthNavigator extends StatelessWidget {
           monthLabel,
           style: NomoTypography.label.copyWith(
             color: theme.colorScheme.onSurface,
-            letterSpacing: 2,
             fontSize: 14,
           ),
         ),
@@ -280,11 +278,11 @@ class _NavButton extends StatelessWidget {
         height: 36,
         decoration: BoxDecoration(
           borderRadius:
-              BorderRadius.circular(NomoDimensions.borderRadius / 2),
+              BorderRadius.circular(NomoDimensions.borderRadiusSmall),
           border: Border.all(
             color: enabled
-                ? theme.colorScheme.onSurface
-                : theme.colorScheme.onSurface.withValues(alpha: 0.15),
+                ? theme.dividerColor
+                : theme.dividerColor,
             width: NomoDimensions.borderWidth,
           ),
         ),
@@ -293,7 +291,7 @@ class _NavButton extends StatelessWidget {
           size: 20,
           color: enabled
               ? theme.colorScheme.onSurface
-              : theme.colorScheme.onSurface.withValues(alpha: 0.15),
+              : theme.dividerColor,
         ),
       ),
     );
@@ -414,8 +412,8 @@ class _MonthGrid extends StatelessWidget {
                                   : backgroundColor,
                           border: isToday
                               ? Border.all(
-                                  color: theme.colorScheme.onSurface,
-                                  width: 2,
+                                  color: theme.colorScheme.primary,
+                                  width: 1.5,
                                 )
                               : null,
                         ),

@@ -9,7 +9,6 @@ import '../../../domain/entities/addiction_type.dart';
 import '../../../domain/entities/tracker.dart' as domain;
 import '../../providers/database_provider.dart';
 import '../../providers/purchase_providers.dart';
-import '../../providers/settings_providers.dart';
 import '../../widgets/bauhaus_app_bar.dart';
 import '../../widgets/bauhaus_button.dart';
 import '../../widgets/bauhaus_card.dart';
@@ -57,9 +56,8 @@ class _AddTrackerScreenState extends ConsumerState<AddTrackerScreen> {
       }
     }
 
-    final settingsAsync = ref.read(settingsFutureProvider);
-    final settings = settingsAsync.valueOrNull;
-    final currency = settings?.currencyCode ?? 'USD';
+    final settings = await ref.read(settingsRepositoryProvider).getSettings();
+    final currency = settings.currencyCode;
 
     // Determine sort order: place at the end
     final count = await ref.read(trackerRepositoryProvider).countActive();
@@ -186,11 +184,10 @@ class _AddTrackerScreenState extends ConsumerState<AddTrackerScreen> {
             if (_selectedType?.id == 'custom') ...[
               const SizedBox(height: NomoDimensions.spacing24),
               Text(
-                'CUSTOM NAME',
+                'Custom name',
                 style: NomoTypography.caption.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               const SizedBox(height: NomoDimensions.spacing8),
@@ -209,11 +206,10 @@ class _AddTrackerScreenState extends ConsumerState<AddTrackerScreen> {
 
             // Quit date
             Text(
-              'QUIT DATE',
+              'Quit date',
               style: NomoTypography.caption.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: NomoDimensions.spacing8),
@@ -260,11 +256,10 @@ class _AddTrackerScreenState extends ConsumerState<AddTrackerScreen> {
 
             // Daily cost
             Text(
-              'DAILY COST (OPTIONAL)',
+              'Daily cost (optional)',
               style: NomoTypography.caption.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: NomoDimensions.spacing8),
@@ -282,11 +277,10 @@ class _AddTrackerScreenState extends ConsumerState<AddTrackerScreen> {
 
             // Frequency
             Text(
-              'TIMES PER DAY (OPTIONAL)',
+              'Times per day (optional)',
               style: NomoTypography.caption.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: NomoDimensions.spacing8),

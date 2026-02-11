@@ -36,10 +36,9 @@ class TrackerCardWidget extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                tracker.name.toUpperCase(),
+                tracker.name,
                 style: NomoTypography.label.copyWith(
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  letterSpacing: 2,
                 ),
               ),
               Container(
@@ -49,11 +48,7 @@ class TrackerCardWidget extends ConsumerWidget {
                 ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(NomoDimensions.borderRadius / 2),
-                  border: Border.all(
-                    color: theme.colorScheme.onSurface,
-                    width: 1.5,
-                  ),
+                  borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
                 ),
                 child: Text(
                   '${tracker.elapsed.inDays}d',

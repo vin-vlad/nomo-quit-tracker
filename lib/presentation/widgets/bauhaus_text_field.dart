@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/nomo_typography.dart';
 import '../../core/theme/nomo_dimensions.dart';
 
-/// A Bauhaus-styled text field with a bold bottom border.
+/// A clean text field with subtle label and rounded input.
 class BauhausTextField extends StatelessWidget {
   final String label;
   final String? hint;
@@ -34,11 +34,10 @@ class BauhausTextField extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          label.toUpperCase(),
-          style: NomoTypography.caption.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.2,
+          label,
+          style: NomoTypography.footnote.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: NomoDimensions.spacing4),

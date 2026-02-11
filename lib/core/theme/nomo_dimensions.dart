@@ -1,4 +1,5 @@
-/// Bauhaus spacing, sizing, and border constants on an 8px grid.
+/// Spacing, sizing, and visual constants for a calm, spacious design.
+/// Based on an 8 px grid with additional intermediate sizes for flexibility.
 class NomoDimensions {
   NomoDimensions._();
 
@@ -7,32 +8,38 @@ class NomoDimensions {
   static const double spacing8 = 8;
   static const double spacing12 = 12;
   static const double spacing16 = 16;
+  static const double spacing20 = 20;
   static const double spacing24 = 24;
+  static const double spacing28 = 28;
   static const double spacing32 = 32;
   static const double spacing48 = 48;
   static const double spacing64 = 64;
 
   // ── Borders ─────────────────────────────────────────────────────────
-  /// Bold border for cards.
-  static const double cardBorderWidth = 2.5;
+  /// Subtle border for cards.
+  static const double cardBorderWidth = 0.5;
 
   /// Standard border for buttons & inputs.
-  static const double borderWidth = 2.0;
+  static const double borderWidth = 1.0;
 
   /// Thin border for dividers.
-  static const double dividerWidth = 2.0;
+  static const double dividerWidth = 0.5;
 
-  // ── Offset shadow ───────────────────────────────────────────────────
-  /// Solid block offset shadow (Bauhaus style — not a blur shadow).
-  static const double shadowOffsetX = 4;
-  static const double shadowOffsetY = 4;
+  // ── Shadow ──────────────────────────────────────────────────────────
+  /// Soft blur shadow (not block-style).
+  static const double shadowBlur = 10;
+  static const double shadowOffsetX = 0;
+  static const double shadowOffsetY = 2;
 
   // ── Border radius ───────────────────────────────────────────────────
-  /// Rounded corners for a softer, modern feel.
-  static const double borderRadius = 12;
+  /// Rounded corners — soft and friendly.
+  static const double borderRadius = 16;
+
+  /// Smaller radius for chips, badges, pills.
+  static const double borderRadiusSmall = 10;
 
   // ── Progress ring ───────────────────────────────────────────────────
-  static const double progressRingStroke = 6;
+  static const double progressRingStroke = 5;
 
   // ── Icon sizes ──────────────────────────────────────────────────────
   static const double iconSmall = 16;

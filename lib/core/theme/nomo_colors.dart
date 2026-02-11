@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Holds a complete color palette for the Nomo Bauhaus design system.
+/// Holds a complete color palette for the Nomo design system.
+/// Apple Health-inspired with soft, calming tones.
 class NomoColorPalette {
   final String id;
   final String name;
@@ -38,16 +39,14 @@ class NomoColorPalette {
       primary: primary,
       secondary: secondary,
       accent: accent,
-      // Slightly soft, low-glare dark surfaces inspired by Material dark.
-      background: const Color(0xFF121212),
-      surface: const Color(0xFF1B1B1B),
-      // Warm off-whites for more comfortable reading at night.
-      onBackground: const Color(0xFFE8E4DF),
-      onSurface: const Color(0xFFCFCBC6),
+      // Deep charcoal backgrounds — comfortable reading at night.
+      background: const Color(0xFF1C1C1E),
+      surface: const Color(0xFF2C2C2E),
+      onBackground: const Color(0xFFF2F2F7),
+      onSurface: const Color(0xFFAEAEB2),
       error: error,
-      // Subtle borders that separate surfaces without harsh white lines.
-      border: const Color(0xFF3A3A3A),
-      shadow: const Color(0xCC000000),
+      border: const Color(0xFF38383A),
+      shadow: const Color(0x29000000),
     );
   }
 
@@ -63,109 +62,125 @@ class NomoColorPalette {
       primary: primary,
       secondary: secondary,
       accent: accent,
-      background: const Color(0xFFFAFAF8),
+      background: const Color(0xFFF2F2F7),
       surface: const Color(0xFFFFFFFF),
-      onBackground: const Color(0xFF1A1A1A),
-      onSurface: const Color(0xFF2D2D2D),
-      error: const Color(0xFFD32F2F),
-      border: const Color(0xFF1A1A1A),
-      shadow: const Color(0xFF1A1A1A),
+      onBackground: const Color(0xFF1C1C1E),
+      onSurface: const Color(0xFF3A3A3C),
+      error: const Color(0xFFFF3B30),
+      border: const Color(0xFFE5E5EA),
+      shadow: const Color(0x1A8E8E93),
     );
   }
 }
 
-/// All preset color palettes.
+/// All preset color palettes — Apple Health-inspired.
 class NomoPalettes {
   NomoPalettes._();
 
-  static const classicBauhaus = NomoColorPalette(
-    id: 'classic_bauhaus',
-    name: 'Classic Bauhaus',
-    primary: Color(0xFFBE1E2D),
-    secondary: Color(0xFF21409A),
-    accent: Color(0xFFF5D327),
-    background: Color(0xFFFAFAF8),
+  /// Default: Soft green health theme.
+  static const serenity = NomoColorPalette(
+    id: 'serenity',
+    name: 'Serenity',
+    primary: Color(0xFF34C759),
+    secondary: Color(0xFF5856D6),
+    accent: Color(0xFFFF9F0A),
+    background: Color(0xFFF2F2F7),
     surface: Color(0xFFFFFFFF),
-    onBackground: Color(0xFF1A1A1A),
-    onSurface: Color(0xFF2D2D2D),
-    error: Color(0xFFD32F2F),
-    border: Color(0xFF1A1A1A),
-    shadow: Color(0xFF1A1A1A),
+    onBackground: Color(0xFF1C1C1E),
+    onSurface: Color(0xFF3A3A3C),
+    error: Color(0xFFFF3B30),
+    border: Color(0xFFE5E5EA),
+    shadow: Color(0x1A8E8E93),
   );
 
-  static const mondrian = NomoColorPalette(
-    id: 'mondrian',
-    name: 'Mondrian',
-    primary: Color(0xFFD40920),
-    secondary: Color(0xFF1356A2),
-    accent: Color(0xFFF7D842),
-    background: Color(0xFFFAFAF8),
+  /// Calming blue tones.
+  static const ocean = NomoColorPalette(
+    id: 'ocean',
+    name: 'Ocean',
+    primary: Color(0xFF0A84FF),
+    secondary: Color(0xFF5AC8FA),
+    accent: Color(0xFF30D158),
+    background: Color(0xFFF2F2F7),
     surface: Color(0xFFFFFFFF),
-    onBackground: Color(0xFF1A1A1A),
-    onSurface: Color(0xFF2D2D2D),
-    error: Color(0xFFD32F2F),
-    border: Color(0xFF1A1A1A),
-    shadow: Color(0xFF1A1A1A),
+    onBackground: Color(0xFF1C1C1E),
+    onSurface: Color(0xFF3A3A3C),
+    error: Color(0xFFFF3B30),
+    border: Color(0xFFE5E5EA),
+    shadow: Color(0x1A8E8E93),
   );
 
-  static const kandinsky = NomoColorPalette(
-    id: 'kandinsky',
-    name: 'Kandinsky',
-    primary: Color(0xFF6B3FA0),
-    secondary: Color(0xFF2A9D8F),
-    accent: Color(0xFFE76F51),
-    background: Color(0xFFFAFAF8),
+  /// Warm coral tones.
+  static const sunset = NomoColorPalette(
+    id: 'sunset',
+    name: 'Sunset',
+    primary: Color(0xFFFF6B6B),
+    secondary: Color(0xFFFF9F0A),
+    accent: Color(0xFFFFD60A),
+    background: Color(0xFFF2F2F7),
     surface: Color(0xFFFFFFFF),
-    onBackground: Color(0xFF1A1A1A),
-    onSurface: Color(0xFF2D2D2D),
-    error: Color(0xFFD32F2F),
-    border: Color(0xFF1A1A1A),
-    shadow: Color(0xFF1A1A1A),
+    onBackground: Color(0xFF1C1C1E),
+    onSurface: Color(0xFF3A3A3C),
+    error: Color(0xFFFF3B30),
+    border: Color(0xFFE5E5EA),
+    shadow: Color(0x1A8E8E93),
   );
 
-  static const klee = NomoColorPalette(
-    id: 'klee',
-    name: 'Klee',
-    primary: Color(0xFFC4745A),
-    secondary: Color(0xFF606C38),
-    accent: Color(0xFFDDA15E),
-    background: Color(0xFFFAFAF8),
+  /// Calming purple tones.
+  static const lavender = NomoColorPalette(
+    id: 'lavender',
+    name: 'Lavender',
+    primary: Color(0xFFBF5AF2),
+    secondary: Color(0xFFAF52DE),
+    accent: Color(0xFFFF2D55),
+    background: Color(0xFFF2F2F7),
     surface: Color(0xFFFFFFFF),
-    onBackground: Color(0xFF1A1A1A),
-    onSurface: Color(0xFF2D2D2D),
-    error: Color(0xFFD32F2F),
-    border: Color(0xFF1A1A1A),
-    shadow: Color(0xFF1A1A1A),
+    onBackground: Color(0xFF1C1C1E),
+    onSurface: Color(0xFF3A3A3C),
+    error: Color(0xFFFF3B30),
+    border: Color(0xFFE5E5EA),
+    shadow: Color(0x1A8E8E93),
   );
 
+  /// Clean grayscale.
   static const monochrome = NomoColorPalette(
     id: 'monochrome',
     name: 'Monochrome',
-    primary: Color(0xFF1A1A1A),
-    secondary: Color(0xFF6B6B6B),
-    accent: Color(0xFFFAFAF8),
-    background: Color(0xFFFAFAF8),
+    primary: Color(0xFF48484A),
+    secondary: Color(0xFF8E8E93),
+    accent: Color(0xFFC7C7CC),
+    background: Color(0xFFF2F2F7),
     surface: Color(0xFFFFFFFF),
-    onBackground: Color(0xFF1A1A1A),
-    onSurface: Color(0xFF2D2D2D),
-    error: Color(0xFFD32F2F),
-    border: Color(0xFF1A1A1A),
-    shadow: Color(0xFF1A1A1A),
+    onBackground: Color(0xFF1C1C1E),
+    onSurface: Color(0xFF3A3A3C),
+    error: Color(0xFFFF3B30),
+    border: Color(0xFFE5E5EA),
+    shadow: Color(0x1A8E8E93),
   );
 
   static const List<NomoColorPalette> all = [
-    classicBauhaus,
-    mondrian,
-    kandinsky,
-    klee,
+    serenity,
+    ocean,
+    sunset,
+    lavender,
     monochrome,
   ];
 
-  /// Look up a palette by its id. Falls back to Classic Bauhaus.
+  /// Look up a palette by its id. Falls back to Serenity.
+  /// Maps legacy Bauhaus IDs to new equivalents for backward compatibility.
   static NomoColorPalette byId(String id) {
+    switch (id) {
+      case 'classic_bauhaus':
+        return serenity;
+      case 'mondrian':
+        return ocean;
+      case 'kandinsky':
+        return lavender;
+      case 'klee':
+        return sunset;
+    }
     return all.firstWhere(
       (p) => p.id == id,
-      orElse: () => classicBauhaus,
+      orElse: () => serenity,
     );
   }
 }

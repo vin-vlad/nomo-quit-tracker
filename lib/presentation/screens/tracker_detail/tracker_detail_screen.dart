@@ -75,7 +75,7 @@ class TrackerDetailScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: _StatBlock(
-                        label: 'SAVED',
+                        label: 'Saved',
                         value: tracker.dailyCost != null
                             ? CurrencyUtils.format(
                                 tracker.totalSaved, tracker.currencyCode)
@@ -86,7 +86,7 @@ class TrackerDetailScreen extends ConsumerWidget {
                     const SizedBox(width: NomoDimensions.spacing12),
                     Expanded(
                       child: _StatBlock(
-                        label: 'RESISTED',
+                        label: 'Resisted',
                         value: cravingCount.toString(),
                         color: theme.colorScheme.tertiary,
                       ),
@@ -94,7 +94,7 @@ class TrackerDetailScreen extends ConsumerWidget {
                     const SizedBox(width: NomoDimensions.spacing12),
                     Expanded(
                       child: _StatBlock(
-                        label: 'SLIPS',
+                        label: 'Slips',
                         value: slipCount.toString(),
                         color: theme.colorScheme.error,
                       ),
@@ -106,7 +106,7 @@ class TrackerDetailScreen extends ConsumerWidget {
 
                 // Insights section
                 Text(
-                  'INSIGHTS',
+                  'Insights',
                   style: NomoTypography.label.copyWith(
                     color:
                         theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -140,7 +140,7 @@ class TrackerDetailScreen extends ConsumerWidget {
                                 color: theme.colorScheme.primary
                                     .withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(
-                                  NomoDimensions.borderRadius / 2,
+                                  NomoDimensions.borderRadiusSmall,
                                 ),
                               ),
                               child: Icon(
@@ -182,12 +182,11 @@ class TrackerDetailScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  'PRO',
+                                  'Pro',
                                   style: NomoTypography.caption.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 10,
-                                    letterSpacing: 1,
                                   ),
                                 ),
                               ),
@@ -212,7 +211,7 @@ class TrackerDetailScreen extends ConsumerWidget {
                 // Next milestone progress
                 if (nextMilestone != null) ...[
                   Text(
-                    'NEXT MILESTONE',
+                    'Next Milestone',
                     style: NomoTypography.label.copyWith(
                       color:
                           theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -264,7 +263,7 @@ class TrackerDetailScreen extends ConsumerWidget {
                 // Achieved milestones
                 if (achieved.isNotEmpty) ...[
                   Text(
-                    'ACHIEVED (${achieved.length})',
+                    'Achieved (${achieved.length})',
                     style: NomoTypography.label.copyWith(
                       color:
                           theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -282,9 +281,9 @@ class TrackerDetailScreen extends ConsumerWidget {
                         ),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(NomoDimensions.borderRadius / 2),
+                          borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
                           border: Border.all(
-                            color: theme.colorScheme.onSurface,
+                            color: theme.dividerColor,
                             width: 1.5,
                           ),
                         ),
@@ -444,7 +443,7 @@ class TrackerDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('CANCEL'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -463,7 +462,7 @@ class TrackerDetailScreen extends ConsumerWidget {
               HapticFeedback.heavyImpact();
               if (ctx.mounted) Navigator.pop(ctx);
             },
-            child: const Text('RESET'),
+            child: const Text('Reset'),
           ),
         ],
       ),
@@ -511,7 +510,6 @@ class _StatBlock extends StatelessWidget {
             label,
             style: NomoTypography.caption.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-              letterSpacing: 1,
             ),
           ),
         ],

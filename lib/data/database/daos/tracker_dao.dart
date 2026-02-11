@@ -65,6 +65,12 @@ class TrackerDao extends DatabaseAccessor<AppDatabase>
         .write(TrackersCompanion(sortOrder: Value(order)));
   }
 
+  /// Update currency code for all trackers.
+  Future<void> updateAllCurrencyCodes(String currencyCode) {
+    return (update(trackers))
+        .write(TrackersCompanion(currencyCode: Value(currencyCode)));
+  }
+
   /// Check if an active tracker with a given addiction type already exists.
   Future<bool> hasActiveTrackerOfType(String addictionTypeId) async {
     final count = countAll();

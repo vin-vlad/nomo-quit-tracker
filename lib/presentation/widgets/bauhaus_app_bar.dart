@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/nomo_dimensions.dart';
 import '../../core/theme/nomo_typography.dart';
 
-/// Custom Bauhaus-styled app bar with geometric back indicator
-/// and bold bottom border.
+/// Clean app bar with subtle bottom separator and a standard back arrow.
 class BauhausAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final bool showBack;
@@ -28,8 +27,8 @@ class BauhausAppBar extends StatelessWidget implements PreferredSizeWidget {
         color: theme.scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.onSurface,
-            width: NomoDimensions.borderWidth,
+            color: theme.dividerColor,
+            width: NomoDimensions.dividerWidth,
           ),
         ),
       ),
@@ -45,20 +44,19 @@ class BauhausAppBar extends StatelessWidget implements PreferredSizeWidget {
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
                   child: Padding(
-                    padding:
-                        const EdgeInsets.only(right: NomoDimensions.spacing12),
-                    child: CustomPaint(
-                      size: const Size(20, 20),
-                      painter: _TriangleBackPainter(
-                        color: theme.colorScheme.onSurface,
-                      ),
+                    padding: const EdgeInsets.only(
+                        right: NomoDimensions.spacing12),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 20,
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                 ),
               Expanded(
                 child: Text(
                   title,
-                  style: NomoTypography.headline.copyWith(
+                  style: NomoTypography.title.copyWith(
                     color: theme.colorScheme.onSurface,
                   ),
                 ),
@@ -70,29 +68,4 @@ class BauhausAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-}
-
-/// Paints a left-pointing triangle as the back indicator.
-class _TriangleBackPainter extends CustomPainter {
-  final Color color;
-
-  _TriangleBackPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final path = Path()
-      ..moveTo(0, size.height / 2)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width, size.height)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

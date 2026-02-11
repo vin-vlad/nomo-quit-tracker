@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../core/theme/nomo_dimensions.dart';
 import '../../../core/theme/nomo_typography.dart';
 import '../../../domain/entities/craving.dart';
+import '../../../domain/entities/slip_record.dart';
 import '../../../domain/usecases/analyze_cravings.dart';
 import '../../providers/craving_providers.dart';
 import '../../providers/purchase_providers.dart';
@@ -18,6 +19,29 @@ import 'widgets/day_detail_sheet.dart';
 
 /// Tracks which tracker is currently selected on the Insights screen.
 final _selectedTrackerIndexProvider = StateProvider<int>((ref) => 0);
+
+enum CravingRange { week, month, threeMonths, sixMonths, all }
+
+extension CravingRangeLabel on CravingRange {
+  String get label {
+    switch (this) {
+      case CravingRange.week:
+        return '7d';
+      case CravingRange.month:
+        return '1m';
+      case CravingRange.threeMonths:
+        return '3m';
+      case CravingRange.sixMonths:
+        return '6m';
+      case CravingRange.all:
+        return 'All';
+    }
+  }
+}
+
+final _cravingRangeProvider = StateProvider<CravingRange>(
+  (ref) => CravingRange.threeMonths,
+);
 
 class InsightsScreen extends ConsumerWidget {
   const InsightsScreen({super.key});
@@ -36,8 +60,8 @@ class InsightsScreen extends ConsumerWidget {
             color: theme.scaffoldBackgroundColor,
             border: Border(
               bottom: BorderSide(
-                color: theme.colorScheme.onSurface,
-                width: NomoDimensions.borderWidth,
+                color: theme.dividerColor,
+                width: NomoDimensions.dividerWidth,
               ),
             ),
           ),
@@ -50,10 +74,9 @@ class InsightsScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Text(
-                    'INSIGHTS',
-                    style: NomoTypography.headline.copyWith(
+                    'Insights',
+                    style: NomoTypography.title.copyWith(
                       color: theme.colorScheme.onSurface,
-                      letterSpacing: 3,
                     ),
                   ),
                 ],
@@ -199,8 +222,8 @@ class _TrackerSelector extends StatelessWidget {
         color: theme.scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.12),
-            width: 1,
+            color: theme.dividerColor,
+            width: NomoDimensions.dividerWidth,
           ),
         ),
       ),
@@ -235,12 +258,12 @@ class _TrackerSelector extends StatelessWidget {
                         ? theme.colorScheme.primary
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(
-                      NomoDimensions.borderRadius / 2,
+                      NomoDimensions.borderRadiusSmall,
                     ),
                     border: Border.all(
                       color: isSelected
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurface,
+                          : theme.dividerColor,
                       width: NomoDimensions.borderWidth,
                     ),
                   ),
@@ -248,14 +271,13 @@ class _TrackerSelector extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        tracker.name.toUpperCase(),
+                        tracker.name,
                         style: NomoTypography.caption.copyWith(
                           color: isSelected
                               ? Colors.white
                               : theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1,
-                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -306,12 +328,18 @@ class InsightsContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final cravingsAsync = ref.watch(cravingsByTrackerProvider(trackerId));
+    final slipsAsync = ref.watch(slipsByTrackerProvider(trackerId));
+
+    final slips = slipsAsync.valueOrNull ?? <SlipRecord>[];
 
     return cravingsAsync.when(
       data: (cravings) {
         final analyzer = AnalyzeCravings();
-        final daily = analyzer.dailyTrend(cravings);
-        final peak = analyzer.peakHours(cravings);
+        final daily = analyzer.dailyTrend(cravings, slips: slips);
+        final peak = analyzer.peakHours(cravings, slips: slips);
+
+        final range = ref.watch(_cravingRangeProvider);
+        final filteredDaily = _filterDailyByRange(daily, range);
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(NomoDimensions.spacing24),
@@ -319,20 +347,38 @@ class InsightsContent extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Craving trend chart ──
-              _SectionHeader(
-                title: 'CRAVING TREND',
-                subtitle: daily.isEmpty
-                    ? null
-                    : '${cravings.length} total · ${(cravings.length / (daily.length.clamp(1, 999))).toStringAsFixed(1)}/day avg',
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: _SectionHeader(
+                      title: 'Craving Trend',
+                      subtitle: daily.isEmpty
+                          ? null
+                          : '${cravings.length} total · ${(cravings.length / (daily.length.clamp(1, 999))).toStringAsFixed(1)}/day avg',
+                    ),
+                  ),
+                  if (daily.isNotEmpty)
+                    _CravingRangeFilter(
+                      selected: range,
+                      onSelected: (newRange) {
+                        ref.read(_cravingRangeProvider.notifier).state =
+                            newRange;
+                      },
+                    ),
+                ],
               ),
               const SizedBox(height: NomoDimensions.spacing12),
-              _CravingTrendChart(daily: daily, theme: theme),
+              _CravingTrendChart(
+                daily: filteredDaily,
+                theme: theme,
+              ),
 
               const SizedBox(height: NomoDimensions.spacing32),
 
               // ── Peak hours chart ──
               _SectionHeader(
-                title: 'PEAK HOURS',
+                title: 'Peak Hours',
                 subtitle: _peakHourSummary(peak),
               ),
               const SizedBox(height: NomoDimensions.spacing12),
@@ -346,7 +392,7 @@ class InsightsContent extends ConsumerWidget {
                 children: [
                   const Expanded(
                     child: _SectionHeader(
-                      title: 'CALENDAR',
+                      title: 'Calendar',
                       subtitle: 'Tap a day to view logged cravings',
                     ),
                   ),
@@ -364,12 +410,11 @@ class InsightsContent extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'VIEW ALL',
+                              'View All',
                               style: NomoTypography.caption.copyWith(
                                 color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10,
-                                letterSpacing: 1,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
                               ),
                             ),
                             const SizedBox(width: 2),
@@ -393,6 +438,7 @@ class InsightsContent extends ConsumerWidget {
                 trackerId: trackerId,
                 dailyCounts: daily,
                 allCravings: cravings,
+                allSlips: slips,
                 primaryColor: theme.colorScheme.primary,
                 backgroundColor: theme.colorScheme.onSurface.withValues(
                   alpha: 0.05,
@@ -420,6 +466,88 @@ class InsightsContent extends ConsumerWidget {
         ? hour - 12
         : hour;
     return 'Peak at $displayHour:00 $period · ${maxHour.count} cravings';
+  }
+
+  List<DayCount> _filterDailyByRange(List<DayCount> daily, CravingRange range) {
+    if (daily.isEmpty) return daily;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    DateTime? cutoff;
+    switch (range) {
+      case CravingRange.week:
+        cutoff = today.subtract(const Duration(days: 6));
+        break;
+      case CravingRange.month:
+        cutoff = today.subtract(const Duration(days: 30));
+        break;
+      case CravingRange.threeMonths:
+        cutoff = today.subtract(const Duration(days: 90));
+        break;
+      case CravingRange.sixMonths:
+        cutoff = today.subtract(const Duration(days: 180));
+        break;
+      case CravingRange.all:
+        cutoff = null;
+        break;
+    }
+
+    if (cutoff == null) return daily;
+    return daily.where((d) => !d.date.isBefore(cutoff!)).toList();
+  }
+}
+
+class _CravingRangeFilter extends StatelessWidget {
+  final CravingRange selected;
+  final ValueChanged<CravingRange> onSelected;
+
+  const _CravingRangeFilter({required this.selected, required this.onSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: CravingRange.values.map((range) {
+        final isSelected = range == selected;
+        return Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: GestureDetector(
+            onTap: () => onSelected(range),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(
+                  NomoDimensions.borderRadiusSmall,
+                ),
+                border: Border.all(
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.dividerColor,
+                  width: NomoDimensions.borderWidth,
+                ),
+              ),
+              child: Text(
+                range.label,
+                style: NomoTypography.caption.copyWith(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected
+                      ? Colors.white
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 }
 
@@ -471,6 +599,11 @@ class _CravingTrendChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxY = _maxY;
+    final yInterval = _yInterval;
+    final xInterval = _xInterval;
+    final showDots = daily.length <= 45;
+
     return BauhausCard(
       child: SizedBox(
         height: 220,
@@ -487,10 +620,12 @@ class _CravingTrendChart extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 16, right: 8),
                 child: LineChart(
                   LineChartData(
+                    minY: 0,
+                    maxY: maxY,
                     gridData: FlGridData(
                       show: true,
                       drawVerticalLine: false,
-                      horizontalInterval: _yInterval,
+                      horizontalInterval: yInterval,
                       getDrawingHorizontalLine: (value) => FlLine(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.08,
@@ -503,7 +638,7 @@ class _CravingTrendChart extends StatelessWidget {
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 28,
-                          interval: _xInterval,
+                          interval: xInterval,
                           getTitlesWidget: (value, meta) {
                             final idx = value.toInt();
                             if (idx < 0 || idx >= daily.length) {
@@ -529,7 +664,7 @@ class _CravingTrendChart extends StatelessWidget {
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 32,
-                          interval: _yInterval,
+                          interval: yInterval,
                           getTitlesWidget: (value, meta) {
                             if (value == meta.max || value < 0) {
                               return const SizedBox.shrink();
@@ -559,10 +694,10 @@ class _CravingTrendChart extends StatelessWidget {
                     borderData: FlBorderData(show: false),
                     lineTouchData: LineTouchData(
                       touchTooltipData: LineTouchTooltipData(
-                        tooltipRoundedRadius: NomoDimensions.borderRadius,
+                        tooltipRoundedRadius: NomoDimensions.borderRadiusSmall,
                         tooltipBorder: BorderSide(
-                          color: theme.colorScheme.onSurface,
-                          width: NomoDimensions.borderWidth,
+                          color: theme.dividerColor,
+                          width: NomoDimensions.cardBorderWidth,
                         ),
                         getTooltipColor: (_) => theme.colorScheme.surface,
                         getTooltipItems: (spots) {
@@ -572,6 +707,17 @@ class _CravingTrendChart extends StatelessWidget {
                               return null;
                             }
                             final d = daily[idx];
+                            final isSlipLine = spot.barIndex == 1;
+                            if (isSlipLine) {
+                              return LineTooltipItem(
+                                '${d.slipCount} slip${d.slipCount != 1 ? 's' : ''}',
+                                NomoTypography.label.copyWith(
+                                  color: theme.colorScheme.error,
+                                  fontSize: 13,
+                                  letterSpacing: 0.5,
+                                ),
+                              );
+                            }
                             return LineTooltipItem(
                               '${DateFormat('EEE, d MMM').format(d.date)}\n',
                               NomoTypography.caption.copyWith(
@@ -596,6 +742,7 @@ class _CravingTrendChart extends StatelessWidget {
                       ),
                     ),
                     lineBarsData: [
+                      // Cravings line
                       LineChartBarData(
                         spots: daily
                             .asMap()
@@ -607,14 +754,15 @@ class _CravingTrendChart extends StatelessWidget {
                               ),
                             )
                             .toList(),
-                        isCurved: false,
+                        isCurved: true,
+                        curveSmoothness: 0.3,
                         color: theme.colorScheme.primary,
-                        barWidth: 2.5,
+                        barWidth: 3,
                         dotData: FlDotData(
-                          show: true,
+                          show: showDots,
                           getDotPainter: (spot, _, __, ___) =>
-                              FlDotSquarePainter(
-                                size: 6,
+                              FlDotCirclePainter(
+                                radius: 1,
                                 color: theme.colorScheme.primary,
                                 strokeWidth: 0,
                               ),
@@ -626,12 +774,58 @@ class _CravingTrendChart extends StatelessWidget {
                           ),
                         ),
                       ),
+                      // Slips line
+                      if (_hasSlips)
+                        LineChartBarData(
+                          spots: daily
+                              .asMap()
+                              .entries
+                              .map(
+                                (e) => FlSpot(
+                                  e.key.toDouble(),
+                                  e.value.slipCount.toDouble(),
+                                ),
+                              )
+                              .toList(),
+                          isCurved: true,
+                          curveSmoothness: 0.3,
+                          color: theme.colorScheme.error,
+                          barWidth: 2,
+                          dashArray: [6, 3],
+                          dotData: FlDotData(
+                            show: showDots,
+                            getDotPainter: (spot, _, __, ___) =>
+                                FlDotCirclePainter(
+                                  radius: 1.5,
+                                  color: theme.colorScheme.error,
+                                  strokeWidth: 0,
+                                ),
+                          ),
+                          belowBarData: BarAreaData(
+                            show: true,
+                            color: theme.colorScheme.error.withValues(
+                              alpha: 0.06,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
               ),
       ),
     );
+  }
+
+  bool get _hasSlips => daily.any((d) => d.slipCount > 0);
+
+  double get _maxY {
+    if (daily.isEmpty) return 1;
+    final maxCraving =
+        daily.map((d) => d.count).reduce((a, b) => a > b ? a : b);
+    final maxSlip =
+        daily.map((d) => d.slipCount).reduce((a, b) => a > b ? a : b);
+    final maxCount = maxCraving > maxSlip ? maxCraving : maxSlip;
+    return maxCount.toDouble();
   }
 
   double get _yInterval {
@@ -661,7 +855,8 @@ class _PeakHoursChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasData = peak.any((h) => h.count > 0);
+    final hasData = peak.any((h) => h.count > 0 || h.slipCount > 0);
+    final hasSlips = peak.any((h) => h.slipCount > 0);
     final peakHour = hasData
         ? peak.reduce((a, b) => a.count >= b.count ? a : b).hour
         : -1;
@@ -702,11 +897,11 @@ class _PeakHoursChart extends StatelessWidget {
                             final hour = value.toInt();
                             // Show every 3 hours
                             if (hour % 3 == 0) {
-                              final period = hour >= 12 ? 'p' : 'a';
+                              final period = hour >= 12 ? 'pm' : 'am';
                               final display = hour == 0
-                                  ? '12a'
+                                  ? '12am'
                                   : hour == 12
-                                  ? '12p'
+                                  ? '12pm'
                                   : hour > 12
                                   ? '${hour - 12}$period'
                                   : '$hour$period';
@@ -763,15 +958,15 @@ class _PeakHoursChart extends StatelessWidget {
                     borderData: FlBorderData(show: false),
                     barTouchData: BarTouchData(
                       touchTooltipData: BarTouchTooltipData(
-                        tooltipRoundedRadius: NomoDimensions.borderRadius,
+                        tooltipRoundedRadius: NomoDimensions.borderRadiusSmall,
                         tooltipBorder: BorderSide(
-                          color: theme.colorScheme.onSurface,
-                          width: NomoDimensions.borderWidth,
+                          color: theme.dividerColor,
+                          width: NomoDimensions.cardBorderWidth,
                         ),
                         getTooltipColor: (_) => theme.colorScheme.surface,
                         getTooltipItem: (group, groupIdx, rod, rodIdx) {
                           final hour = group.x;
-                          final count = rod.toY.toInt();
+                          final h = peak.firstWhere((p) => p.hour == hour);
                           final period = hour >= 12 ? 'PM' : 'AM';
                           final display = hour == 0
                               ? 12
@@ -787,13 +982,24 @@ class _PeakHoursChart extends StatelessWidget {
                             ),
                             children: [
                               TextSpan(
-                                text: '$count craving${count != 1 ? 's' : ''}',
+                                text:
+                                    '${h.count} craving${h.count != 1 ? 's' : ''}',
                                 style: NomoTypography.label.copyWith(
                                   color: theme.colorScheme.secondary,
                                   fontSize: 13,
                                   letterSpacing: 0.5,
                                 ),
                               ),
+                              if (h.slipCount > 0)
+                                TextSpan(
+                                  text:
+                                      '\n${h.slipCount} slip${h.slipCount != 1 ? 's' : ''}',
+                                  style: NomoTypography.label.copyWith(
+                                    color: theme.colorScheme.error,
+                                    fontSize: 13,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
                             ],
                           );
                         },
@@ -809,9 +1015,16 @@ class _PeakHoursChart extends StatelessWidget {
                                 color: h.hour == peakHour
                                     ? theme.colorScheme.primary
                                     : theme.colorScheme.secondary,
-                                width: 8,
+                                width: hasSlips ? 5 : 8,
                                 borderRadius: BorderRadius.circular(3),
                               ),
+                              if (hasSlips)
+                                BarChartRodData(
+                                  toY: h.slipCount.toDouble(),
+                                  color: theme.colorScheme.error,
+                                  width: 5,
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
                             ],
                           ),
                         )
@@ -839,6 +1052,7 @@ class _CalendarHeatmap extends StatelessWidget {
   final String trackerId;
   final List<DayCount> dailyCounts;
   final List<Craving> allCravings;
+  final List<SlipRecord> allSlips;
   final Color primaryColor;
   final Color backgroundColor;
 
@@ -846,6 +1060,7 @@ class _CalendarHeatmap extends StatelessWidget {
     required this.trackerId,
     required this.dailyCounts,
     required this.allCravings,
+    required this.allSlips,
     required this.primaryColor,
     required this.backgroundColor,
   });
@@ -884,8 +1099,12 @@ class _CalendarHeatmap extends StatelessWidget {
 
     // Build map of counts
     final countMap = <String, int>{};
+    final slipMap = <String, int>{};
     for (final d in dailyCounts) {
       countMap[_dayKey(d.date)] = d.count;
+      if (d.slipCount > 0) {
+        slipMap[_dayKey(d.date)] = d.slipCount;
+      }
     }
 
     // Build weeks grid
@@ -904,260 +1123,222 @@ class _CalendarHeatmap extends StatelessWidget {
 
     const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
+    const cellGap = 3.0;
+
     return BauhausCard(
       padding: const EdgeInsets.all(NomoDimensions.spacing16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Month label row
-          _CalendarMonthLabels(days: days, numWeeks: numWeeks, theme: theme),
-          const SizedBox(height: NomoDimensions.spacing8),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final totalWidth = constraints.maxWidth;
+          final cellSize =
+              ((totalWidth - (7 - 1) * cellGap) / 7).clamp(16.0, 44.0);
 
-          // Grid with weekday labels
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // Detect which week-rows start a new month
+          final monthLabels = <int, String>{};
+          int? lastMonth;
+          for (int week = 0; week < numWeeks; week++) {
+            final dayIdx = week * 7;
+            if (dayIdx < days.length) {
+              final day = days[dayIdx];
+              if (day.month != lastMonth) {
+                monthLabels[week] = DateFormat('MMM').format(day);
+                lastMonth = day.month;
+              }
+            }
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Weekday labels column
-              Column(
-                children: weekdays
-                    .map(
-                      (d) => SizedBox(
-                        height: 28,
-                        width: 20,
-                        child: Center(
-                          child: Text(
-                            d,
-                            style: NomoTypography.caption.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.4,
-                              ),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                            ),
+              // Weekday header row (M T W T F S S)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(7, (col) {
+                  return Container(
+                    width: cellSize,
+                    margin: EdgeInsets.only(right: col < 6 ? cellGap : 0),
+                    alignment: Alignment.center,
+                    child: Text(
+                      weekdays[col],
+                      style: NomoTypography.caption.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.4,
+                        ),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 4),
+
+              // Week rows
+              ...List.generate(numWeeks, (week) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Month label above week row when month changes
+                    if (monthLabels.containsKey(week)) ...[
+                      if (week > 0) const SizedBox(height: 6),
+                      Text(
+                        monthLabels[week]!,
+                        style: NomoTypography.caption.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
                           ),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(width: 4),
+                      const SizedBox(height: 4),
+                    ],
+                    SizedBox(
+                      height: cellSize,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(7, (col) {
+                          final dayIdx = week * 7 + col;
+                          if (dayIdx >= days.length) {
+                            return SizedBox(
+                              width: cellSize,
+                              height: cellSize,
+                            );
+                          }
+                          final day = days[dayIdx];
+                          final key = _dayKey(day);
+                          final count = countMap[key] ?? 0;
+                          final slipCount = slipMap[key] ?? 0;
+                          final intensity = maxCount > 0
+                              ? (count / maxCount).clamp(0.0, 1.0)
+                              : 0.0;
+                          final isToday = day.isAtSameMomentAs(today);
+                          final isFuture = day.isAfter(today);
+                          final hasSlip = slipCount > 0;
 
-              // Calendar grid
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final cellSize =
-                        ((constraints.maxWidth - (numWeeks - 1) * 3) / numWeeks)
-                            .clamp(16.0, 32.0);
-                    return Column(
-                      children: List.generate(7, (row) {
-                        return SizedBox(
-                          height: 28,
-                          child: Row(
-                            children: List.generate(numWeeks, (col) {
-                              final dayIdx = col * 7 + row;
-                              if (dayIdx >= days.length) {
-                                return SizedBox(
-                                  width: cellSize,
-                                  height: cellSize,
-                                );
-                              }
-                              final day = days[dayIdx];
-                              final key = _dayKey(day);
-                              final count = countMap[key] ?? 0;
-                              final intensity = maxCount > 0
-                                  ? (count / maxCount).clamp(0.0, 1.0)
-                                  : 0.0;
-                              final isToday = day.isAtSameMomentAs(today);
-                              final isFuture = day.isAfter(today);
+                          // Use error color for slip days, primary for craving-only
+                          final cellColor = isFuture
+                              ? Colors.transparent
+                              : hasSlip
+                                  ? theme.colorScheme.error.withValues(
+                                      alpha: 0.25 + intensity * 0.75,
+                                    )
+                                  : count > 0
+                                      ? primaryColor.withValues(
+                                          alpha: 0.15 + intensity * 0.85,
+                                        )
+                                      : backgroundColor;
 
-                              return Expanded(
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    right: col < numWeeks - 1 ? 3 : 0,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: isFuture
-                                        ? null
-                                        : () => _showDayDetail(
-                                            context,
-                                            day,
-                                            theme,
-                                          ),
-                                    child: Container(
-                                      height: cellSize,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4),
-                                        color: isFuture
-                                            ? Colors.transparent
-                                            : count > 0
-                                            ? primaryColor.withValues(
-                                                alpha: 0.15 + intensity * 0.85,
-                                              )
-                                            : backgroundColor,
-                                        border: isToday
-                                            ? Border.all(
-                                                color:
-                                                    theme.colorScheme.onSurface,
-                                                width: 2,
-                                              )
-                                            : null,
+                          return Container(
+                            width: cellSize,
+                            height: cellSize,
+                            margin: EdgeInsets.only(
+                              right: col < 6 ? cellGap : 0,
+                            ),
+                            child: GestureDetector(
+                              onTap: isFuture
+                                  ? null
+                                  : () => _showDayDetail(
+                                        context,
+                                        day,
+                                        theme,
                                       ),
-                                      child: Center(
-                                        child: Text(
-                                          '${day.day}',
-                                          style: NomoTypography.caption
-                                              .copyWith(
-                                                fontSize: 9,
-                                                fontWeight: isToday
-                                                    ? FontWeight.w700
-                                                    : FontWeight.w400,
-                                                color: isFuture
-                                                    ? theme
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withValues(
-                                                            alpha: 0.15,
-                                                          )
-                                                    : count > 0 &&
-                                                          intensity > 0.5
-                                                    ? Colors.white
-                                                    : theme
-                                                          .colorScheme
-                                                          .onSurface
-                                                          .withValues(
-                                                            alpha: 0.6,
-                                                          ),
-                                              ),
-                                        ),
-                                      ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: cellColor,
+                                  border: isToday
+                                      ? Border.all(
+                                          color: theme.colorScheme.primary,
+                                          width: 1.5,
+                                        )
+                                      : null,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${day.day}',
+                                    style: NomoTypography.caption.copyWith(
+                                      fontSize: 9,
+                                      fontWeight: isToday
+                                          ? FontWeight.w700
+                                          : FontWeight.w400,
+                                      color: isFuture
+                                          ? theme.colorScheme.onSurface
+                                              .withValues(alpha: 0.15)
+                                          : (count > 0 && intensity > 0.5) ||
+                                                  hasSlip
+                                              ? Colors.white
+                                              : theme.colorScheme.onSurface
+                                                  .withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ),
-                              );
-                            }),
-                          ),
-                        );
-                      }),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: NomoDimensions.spacing12),
-
-          // Legend
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                'Less',
-                style: NomoTypography.caption.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                  fontSize: 10,
-                ),
-              ),
-              const SizedBox(width: 4),
-              ...List.generate(5, (i) {
-                final alpha = i == 0 ? 0.0 : 0.15 + (i / 4) * 0.85;
-                return Container(
-                  width: 14,
-                  height: 14,
-                  margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(3),
-                    color: i == 0
-                        ? backgroundColor
-                        : primaryColor.withValues(alpha: alpha),
-                  ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    if (week < numWeeks - 1) const SizedBox(height: 3),
+                  ],
                 );
               }),
-              const SizedBox(width: 4),
-              Text(
-                'More',
-                style: NomoTypography.caption.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                  fontSize: 10,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 
-  void _showDayDetail(BuildContext context, DateTime day, ThemeData theme) {
-    showDayDetailSheet(context: context, day: day, allCravings: allCravings);
-  }
+              const SizedBox(height: NomoDimensions.spacing12),
 
-  String _dayKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Calendar month labels row
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _CalendarMonthLabels extends StatelessWidget {
-  final List<DateTime> days;
-  final int numWeeks;
-  final ThemeData theme;
-
-  const _CalendarMonthLabels({
-    required this.days,
-    required this.numWeeks,
-    required this.theme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // Find first day of each week and detect month boundaries
-    final labels = <_MonthLabel>[];
-    int? lastMonth;
-    for (int col = 0; col < numWeeks; col++) {
-      final dayIdx = col * 7; // First day (Monday) of each week
-      if (dayIdx < days.length) {
-        final day = days[dayIdx];
-        if (day.month != lastMonth) {
-          labels.add(_MonthLabel(col, DateFormat('MMM').format(day)));
-          lastMonth = day.month;
-        }
-      }
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 24), // Offset for weekday labels
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final weekWidth = constraints.maxWidth / numWeeks;
-          return SizedBox(
-            height: 16,
-            child: Stack(
-              children: labels.map((label) {
-                return Positioned(
-                  left: label.weekIndex * weekWidth,
-                  child: Text(
-                    label.name,
+              // Legend
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'Less',
                     style: NomoTypography.caption.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.4),
                       fontSize: 10,
-                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
+                  const SizedBox(width: 4),
+                  ...List.generate(5, (i) {
+                    final alpha = i == 0 ? 0.0 : 0.15 + (i / 4) * 0.85;
+                    return Container(
+                      width: 14,
+                      height: 14,
+                      margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(3),
+                        color: i == 0
+                            ? backgroundColor
+                            : primaryColor.withValues(alpha: alpha),
+                      ),
+                    );
+                  }),
+                  const SizedBox(width: 4),
+                  Text(
+                    'More',
+                    style: NomoTypography.caption.copyWith(
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           );
         },
       ),
     );
   }
-}
 
-class _MonthLabel {
-  final int weekIndex;
-  final String name;
-  const _MonthLabel(this.weekIndex, this.name);
+  void _showDayDetail(BuildContext context, DateTime day, ThemeData theme) {
+    showDayDetailSheet(
+      context: context,
+      day: day,
+      allCravings: allCravings,
+      allSlips: allSlips,
+    );
+  }
+
+  String _dayKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
 }

@@ -13,7 +13,7 @@ class TrackerInsightsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: const BauhausAppBar(title: 'INSIGHTS'),
+      appBar: const BauhausAppBar(title: 'Insights'),
       body: InsightsContent(trackerId: trackerId),
     );
   }

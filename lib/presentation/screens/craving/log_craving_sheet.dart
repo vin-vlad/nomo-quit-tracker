@@ -85,8 +85,8 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
                   color: theme.colorScheme.primary,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: theme.colorScheme.onSurface,
-                    width: NomoDimensions.cardBorderWidth,
+                    color: theme.dividerColor,
+                    width: NomoDimensions.borderWidth,
                   ),
                 ),
                 child: const Icon(Icons.check, color: Colors.white, size: 36),
@@ -94,7 +94,7 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
             ),
             const SizedBox(height: NomoDimensions.spacing12),
             Text(
-              'TAP TO LOG',
+              'Tap to log',
               style: NomoTypography.label.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -128,7 +128,7 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
 
             // Intensity slider
             Text(
-              'INTENSITY',
+              'Intensity',
               style: NomoTypography.label.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -175,9 +175,9 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
                     vertical: NomoDimensions.spacing4,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(NomoDimensions.borderRadius / 2),
+                    borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
                     border: Border.all(
-                      color: theme.colorScheme.onSurface,
+                      color: theme.dividerColor,
                       width: 1.5,
                     ),
                   ),
@@ -196,7 +196,7 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
 
             // Trigger picker
             Text(
-              'TRIGGER',
+              'Trigger',
               style: NomoTypography.label.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -218,12 +218,11 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
                       color: isSelected
                           ? theme.colorScheme.primary
                           : Colors.transparent,
-                      borderRadius: BorderRadius.circular(NomoDimensions.borderRadius / 2),
+                      borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
                       border: Border.all(
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface
-                                .withValues(alpha: 0.3),
+                            : theme.dividerColor,
                         width: 1.5,
                       ),
                     ),
@@ -245,7 +244,7 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
 
             // Note
             Text(
-              'NOTE (OPTIONAL)',
+              'Note (optional)',
               style: NomoTypography.label.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -302,14 +301,14 @@ class _SquareThumb extends SliderComponentShape {
     required Size sizeWithOverflow,
   }) {
     final canvas = context.canvas;
-    const radius = 4.0;
+    const radius = 9.0;
     final rect = Rect.fromCenter(center: center, width: 18, height: 18);
     final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(radius));
     final paint = Paint()..color = sliderTheme.thumbColor!;
     canvas.drawRRect(rrect, paint);
     // Border
     final borderPaint = Paint()
-      ..color = Colors.black
+      ..color = sliderTheme.thumbColor!.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
     canvas.drawRRect(rrect, borderPaint);

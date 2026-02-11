@@ -28,4 +28,7 @@ abstract class TrackerRepository {
 
   /// Check if an active tracker with a given addiction type ID exists.
   Future<bool> hasActiveTrackerOfType(String addictionTypeId);
+
+  /// Update currency code for all trackers.
+  Future<void> updateAllCurrencyCodes(String currencyCode);
 }

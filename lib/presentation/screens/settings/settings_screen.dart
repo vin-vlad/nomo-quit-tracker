@@ -28,8 +28,8 @@ class SettingsScreen extends ConsumerWidget {
             color: theme.scaffoldBackgroundColor,
             border: Border(
               bottom: BorderSide(
-                color: theme.colorScheme.onSurface,
-                width: NomoDimensions.borderWidth,
+                color: theme.dividerColor,
+                width: NomoDimensions.dividerWidth,
               ),
             ),
           ),
@@ -42,10 +42,9 @@ class SettingsScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Text(
-                    'SETTINGS',
-                    style: NomoTypography.headline.copyWith(
+                    'Settings',
+                    style: NomoTypography.title.copyWith(
                       color: theme.colorScheme.onSurface,
-                      letterSpacing: 3,
                     ),
                   ),
                 ],
@@ -62,7 +61,7 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               // ── Theme ───────────────────────────────────────────
               Text(
-                'THEME',
+                'Theme',
                 style: NomoTypography.label.copyWith(
                   color:
                       theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -73,9 +72,11 @@ class SettingsScreen extends ConsumerWidget {
                 spacing: NomoDimensions.spacing12,
                 runSpacing: NomoDimensions.spacing12,
                 children: NomoPalettes.all.map((palette) {
-                  final isSelected =
-                      palette.id == settings.selectedPaletteId;
-                  final isLocked = palette.id != 'classic_bauhaus' &&
+                  // Resolve legacy palette IDs for correct selection highlight
+                  final resolvedId =
+                      NomoPalettes.byId(settings.selectedPaletteId).id;
+                  final isSelected = palette.id == resolvedId;
+                  final isLocked = palette.id != 'serenity' &&
                       palette.id != 'monochrome' &&
                       !isPremium;
 
@@ -91,12 +92,11 @@ class SettingsScreen extends ConsumerWidget {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(NomoDimensions.borderRadius / 2),
+                        borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
                         border: Border.all(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface
-                                  .withValues(alpha: 0.2),
+                              : theme.dividerColor,
                           width: isSelected ? 3 : 1.5,
                         ),
                       ),
@@ -135,7 +135,7 @@ class SettingsScreen extends ConsumerWidget {
 
               // ── Brightness ──────────────────────────────────────
               Text(
-                'APPEARANCE',
+                'Appearance',
                 style: NomoTypography.label.copyWith(
                   color:
                       theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -171,7 +171,7 @@ class SettingsScreen extends ConsumerWidget {
 
               // ── Currency ────────────────────────────────────────
               Text(
-                'CURRENCY',
+                'Currency',
                 style: NomoTypography.label.copyWith(
                   color:
                       theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -179,6 +179,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: NomoDimensions.spacing12),
               DropdownButtonFormField<String>(
+                key: ValueKey(settings.currencyCode),
                 initialValue: settings.currencyCode,
                 decoration: const InputDecoration(
                   border: UnderlineInputBorder(),
@@ -189,8 +190,8 @@ class SettingsScreen extends ConsumerWidget {
                           child: Text('${c.symbol} ${c.code} — ${c.name}'),
                         ))
                     .toList(),
-                onChanged: (v) {
-                  if (v != null) _updateCurrency(ref, settings, v);
+                onChanged: (v) async {
+                  if (v != null) await _updateCurrency(ref, settings, v);
                 },
               ),
 
@@ -198,7 +199,7 @@ class SettingsScreen extends ConsumerWidget {
 
               // ── Notifications ───────────────────────────────────
               Text(
-                'NOTIFICATIONS',
+                'Notifications',
                 style: NomoTypography.label.copyWith(
                   color:
                       theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -230,7 +231,7 @@ class SettingsScreen extends ConsumerWidget {
 
               // ── Subscription ────────────────────────────────────
               Text(
-                'SUBSCRIPTION',
+                'Subscription',
                 style: NomoTypography.label.copyWith(
                   color:
                       theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -274,7 +275,7 @@ class SettingsScreen extends ConsumerWidget {
 
               // ── About ──────────────────────────────────────────
               Text(
-                'ABOUT',
+                'About',
                 style: NomoTypography.label.copyWith(
                   color:
                       theme.colorScheme.onSurface.withValues(alpha: 0.6),
@@ -338,10 +339,12 @@ class SettingsScreen extends ConsumerWidget {
         );
   }
 
-  void _updateCurrency(WidgetRef ref, dynamic settings, String code) {
-    ref.read(settingsRepositoryProvider).updateSettings(
+  Future<void> _updateCurrency(
+      WidgetRef ref, dynamic settings, String code) async {
+    await ref.read(settingsRepositoryProvider).updateSettings(
           settings.copyWith(currencyCode: code),
         );
+    await ref.read(trackerRepositoryProvider).updateAllCurrencyCodes(code);
   }
 
   void _updateNotifications(WidgetRef ref, dynamic settings, bool enabled) {
@@ -381,19 +384,18 @@ class _BrightnessOption extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  : theme.dividerColor,
               width: NomoDimensions.borderWidth,
             ),
           ),
           child: Center(
             child: Text(
-              label.toUpperCase(),
+              label,
               style: NomoTypography.caption.copyWith(
                 color: isSelected
                     ? Colors.white
                     : theme.colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
-                letterSpacing: 1,
               ),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../presentation/screens/onboarding/onboarding_screen.dart';
@@ -10,6 +11,45 @@ import '../../presentation/screens/tracker_detail/tracker_detail_screen.dart';
 import '../../presentation/screens/add_tracker/add_tracker_screen.dart';
 import '../../presentation/screens/paywall/paywall_screen.dart';
 import '../../presentation/widgets/bauhaus_tab_bar.dart';
+
+/// Wraps a root screen to show an exit confirmation when the Android back
+/// button is pressed instead of closing the app immediately.
+class _ExitConfirmationScope extends StatelessWidget {
+  const _ExitConfirmationScope({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldExit = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Exit app?'),
+            content: const Text('Are you sure you want to exit?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Exit'),
+              ),
+            ],
+          ),
+        );
+        if (shouldExit == true && context.mounted) {
+          SystemNavigator.pop();
+        }
+      },
+      child: child,
+    );
+  }
+}
 
 /// Shell with bottom tab navigation and shared-axis transition on tab switch.
 class _ShellScaffold extends StatefulWidget {
@@ -74,19 +114,49 @@ class _ShellScaffoldState extends State<_ShellScaffold>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FadeTransition(
-        opacity: _fadeAnimation,
-        child: SlideTransition(
-          position: _slideAnimation,
-          child: widget.child,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        if (Navigator.of(context).canPop()) {
+          if (context.mounted) context.pop();
+        } else {
+          final shouldExit = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Exit app?'),
+              content: const Text('Are you sure you want to exit?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  child: const Text('Exit'),
+                ),
+              ],
+            ),
+          );
+          if (shouldExit == true && context.mounted) {
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        body: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: widget.child,
+          ),
         ),
-      ),
-      bottomNavigationBar: BauhausTabBar(
-        currentIndex: widget.currentIndex,
-        onTap: (index) => widget.navigationShell.goBranch(
-          index,
-          initialLocation: index == widget.navigationShell.currentIndex,
+        bottomNavigationBar: BauhausTabBar(
+          currentIndex: widget.currentIndex,
+          onTap: (index) => widget.navigationShell.goBranch(
+            index,
+            initialLocation: index == widget.navigationShell.currentIndex,
+          ),
         ),
       ),
     );
@@ -100,7 +170,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // Onboarding (no tabs)
       GoRoute(
         path: '/onboarding',
-        builder: (context, state) => const OnboardingScreen(),
+        builder: (context, state) => _ExitConfirmationScope(
+          child: const OnboardingScreen(),
+        ),
       ),
 
       // Main tab shell

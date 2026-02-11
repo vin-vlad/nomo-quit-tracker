@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/nomo_dimensions.dart';
 
-/// A card with a bold border and a solid offset shadow — the signature
-/// Bauhaus/Brutalist elevation technique.
+/// A clean card with a soft blur shadow and rounded corners.
+/// No offset block shadow — just gentle elevation.
 class BauhausCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
@@ -24,48 +24,35 @@ class BauhausCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final border = borderColor ?? theme.colorScheme.onSurface;
-    final shadow = shadowColor ?? border;
     final bg = backgroundColor ?? theme.colorScheme.surface;
+    final border = borderColor ?? theme.dividerColor;
 
     return GestureDetector(
       onTap: onTap,
-      child: Stack(
-        children: [
-          // Shadow block (offset behind the card)
-          Positioned(
-            left: NomoDimensions.shadowOffsetX,
-            top: NomoDimensions.shadowOffsetY,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: shadow,
-                borderRadius:
-                    BorderRadius.circular(NomoDimensions.borderRadius),
+      child: Container(
+        padding:
+            padding ?? const EdgeInsets.all(NomoDimensions.cardPadding),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius:
+              BorderRadius.circular(NomoDimensions.borderRadius),
+          border: Border.all(
+            color: border,
+            width: NomoDimensions.cardBorderWidth,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor ??
+                  theme.shadowColor.withValues(alpha: 0.06),
+              blurRadius: NomoDimensions.shadowBlur,
+              offset: const Offset(
+                NomoDimensions.shadowOffsetX,
+                NomoDimensions.shadowOffsetY,
               ),
             ),
-          ),
-          // Foreground card
-          Container(
-            margin: const EdgeInsets.only(
-              right: NomoDimensions.shadowOffsetX,
-              bottom: NomoDimensions.shadowOffsetY,
-            ),
-            padding: padding ??
-                const EdgeInsets.all(NomoDimensions.cardPadding),
-            decoration: BoxDecoration(
-              color: bg,
-              borderRadius:
-                  BorderRadius.circular(NomoDimensions.borderRadius),
-              border: Border.all(
-                color: border,
-                width: NomoDimensions.cardBorderWidth,
-              ),
-            ),
-            child: child,
-          ),
-        ],
+          ],
+        ),
+        child: child,
       ),
     );
   }

@@ -70,13 +70,13 @@ class _AnimatedCounterState extends State<AnimatedCounter> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        _CounterSegment(value: parts.days, label: 'DAYS', digitStyle: dStyle, labelStyle: lStyle),
+        _CounterSegment(value: parts.days, label: 'Days', digitStyle: dStyle, labelStyle: lStyle),
         _Separator(style: dStyle),
-        _CounterSegment(value: parts.hours, label: 'HRS', digitStyle: dStyle, labelStyle: lStyle),
+        _CounterSegment(value: parts.hours, label: 'Hrs', digitStyle: dStyle, labelStyle: lStyle),
         _Separator(style: dStyle),
-        _CounterSegment(value: parts.minutes, label: 'MIN', digitStyle: dStyle, labelStyle: lStyle),
+        _CounterSegment(value: parts.minutes, label: 'Min', digitStyle: dStyle, labelStyle: lStyle),
         _Separator(style: dStyle),
-        _CounterSegment(value: parts.seconds, label: 'SEC', digitStyle: dStyle, labelStyle: lStyle),
+        _CounterSegment(value: parts.seconds, label: 'Sec', digitStyle: dStyle, labelStyle: lStyle),
       ],
     );
   }

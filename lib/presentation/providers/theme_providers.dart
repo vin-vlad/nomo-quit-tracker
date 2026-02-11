@@ -21,8 +21,8 @@ final currentPaletteProvider = Provider<NomoColorPalette>((ref) {
       }
       return NomoPalettes.byId(settings.selectedPaletteId);
     },
-    loading: () => NomoPalettes.classicBauhaus,
-    error: (_, __) => NomoPalettes.classicBauhaus,
+    loading: () => NomoPalettes.serenity,
+    error: (_, __) => NomoPalettes.serenity,
   );
 });
 

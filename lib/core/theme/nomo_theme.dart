@@ -6,8 +6,8 @@ import 'nomo_typography.dart';
 
 /// Builds a Material [ThemeData] from a [NomoColorPalette] and brightness.
 ///
-/// All Material defaults are overridden to match the Bauhaus aesthetic:
-/// sharp corners, bold borders, no ripple, flat colors.
+/// Apple Health-inspired: soft surfaces, subtle borders, gentle shadows,
+/// rounded corners, and generous whitespace.
 class NomoTheme {
   NomoTheme._();
 
@@ -36,6 +36,8 @@ class NomoTheme {
         onSurface: colors.onSurface,
       ),
       scaffoldBackgroundColor: colors.background,
+      shadowColor: colors.shadow,
+      dividerColor: colors.border,
 
       // ── Text ──────────────────────────────────────────────────────
       textTheme: textTheme,
@@ -46,13 +48,13 @@ class NomoTheme {
         foregroundColor: colors.onBackground,
         elevation: 0,
         scrolledUnderElevation: 0,
-        titleTextStyle: NomoTypography.headline.copyWith(
+        titleTextStyle: NomoTypography.title.copyWith(
           color: colors.onBackground,
         ),
         shape: Border(
           bottom: BorderSide(
             color: colors.border,
-            width: NomoDimensions.borderWidth,
+            width: NomoDimensions.dividerWidth,
           ),
         ),
       ),
@@ -80,14 +82,10 @@ class NomoTheme {
           textStyle: NomoTypography.label,
           padding: const EdgeInsets.symmetric(
             horizontal: NomoDimensions.spacing24,
-            vertical: NomoDimensions.spacing16,
+            vertical: 14,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
-            side: BorderSide(
-              color: colors.border,
-              width: NomoDimensions.borderWidth,
-            ),
           ),
         ),
       ),
@@ -98,13 +96,13 @@ class NomoTheme {
           textStyle: NomoTypography.label,
           padding: const EdgeInsets.symmetric(
             horizontal: NomoDimensions.spacing24,
-            vertical: NomoDimensions.spacing16,
+            vertical: 14,
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
           ),
           side: BorderSide(
-            color: colors.border,
+            color: colors.primary.withValues(alpha: 0.4),
             width: NomoDimensions.borderWidth,
           ),
         ),
@@ -125,33 +123,35 @@ class NomoTheme {
 
       // ── Input ─────────────────────────────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
-        filled: false,
-        border: UnderlineInputBorder(
-          borderSide: BorderSide(
-            color: colors.border,
-            width: NomoDimensions.borderWidth,
-          ),
+        filled: true,
+        fillColor: isDark
+            ? colors.surface
+            : colors.onSurface.withValues(alpha: 0.04),
+        border: OutlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(NomoDimensions.borderRadiusSmall),
+          borderSide: BorderSide.none,
         ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(
-            // Make borders a bit more visible in dark mode while
-            // staying subtle in light mode.
-            color: colors.border.withValues(alpha: isDark ? 0.6 : 0.4),
-            width: NomoDimensions.borderWidth,
-          ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(NomoDimensions.borderRadiusSmall),
+          borderSide: BorderSide.none,
         ),
-        focusedBorder: UnderlineInputBorder(
+        focusedBorder: OutlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(NomoDimensions.borderRadiusSmall),
           borderSide: BorderSide(
             color: colors.primary,
             width: NomoDimensions.borderWidth,
           ),
         ),
-        labelStyle: NomoTypography.caption.copyWith(color: colors.onSurface),
+        labelStyle:
+            NomoTypography.footnote.copyWith(color: colors.onSurface),
         hintStyle: NomoTypography.body.copyWith(
-          // Slightly stronger hint contrast in dark mode for legibility.
-          color: colors.onSurface.withValues(alpha: isDark ? 0.7 : 0.5),
+          color: colors.onSurface.withValues(alpha: isDark ? 0.5 : 0.35),
         ),
         contentPadding: const EdgeInsets.symmetric(
+          horizontal: NomoDimensions.spacing16,
           vertical: NomoDimensions.spacing12,
         ),
       ),
@@ -160,21 +160,22 @@ class NomoTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: colors.surface,
         selectedItemColor: colors.primary,
-        // Unselected items stay readable in dark mode.
         unselectedItemColor:
-            colors.onSurface.withValues(alpha: isDark ? 0.7 : 0.5),
+            colors.onSurface.withValues(alpha: isDark ? 0.6 : 0.4),
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         selectedLabelStyle: NomoTypography.caption.copyWith(
           fontWeight: FontWeight.w600,
+          fontSize: 10,
         ),
-        unselectedLabelStyle: NomoTypography.caption,
+        unselectedLabelStyle: NomoTypography.caption.copyWith(
+          fontSize: 10,
+        ),
       ),
 
       // ── Misc ──────────────────────────────────────────────────────
       dividerTheme: DividerThemeData(
-        // Soften dividers in dark mode to avoid high-contrast lines.
-        color: isDark ? colors.border.withValues(alpha: 0.7) : colors.border,
+        color: colors.border,
         thickness: NomoDimensions.dividerWidth,
         space: 0,
       ),
@@ -194,35 +195,28 @@ class NomoTheme {
         },
       ),
 
-      // Disable Material splash/ripple for a Bauhaus feel.
-      splashFactory: NoSplash.splashFactory,
-      highlightColor: colors.primary.withValues(alpha: 0.1),
+      // Enable subtle Material ripple for gentle feedback.
+      splashFactory: InkSparkle.splashFactory,
+      highlightColor: colors.primary.withValues(alpha: 0.08),
 
       // Dialogs
       dialogTheme: DialogThemeData(
         backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
-          side: BorderSide(
-            color: colors.border,
-            width: NomoDimensions.cardBorderWidth,
-          ),
         ),
+        elevation: 4,
       ),
 
       // Bottom sheet
-      bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: colors.surface,
+      bottomSheetTheme: const BottomSheetThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(NomoDimensions.borderRadius),
-            topRight: Radius.circular(NomoDimensions.borderRadius),
-          ),
-          side: BorderSide(
-            color: colors.border,
-            width: NomoDimensions.cardBorderWidth,
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           ),
         ),
+        elevation: 8,
       ),
     );
   }

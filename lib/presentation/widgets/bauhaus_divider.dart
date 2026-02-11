@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/nomo_dimensions.dart';
 
-/// Thick Bauhaus-styled horizontal rule.
+/// Subtle horizontal divider.
 class BauhausDivider extends StatelessWidget {
   final Color? color;
 
@@ -11,7 +11,7 @@ class BauhausDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: NomoDimensions.dividerWidth,
-      color: color ?? Theme.of(context).colorScheme.onSurface,
+      color: color ?? Theme.of(context).dividerColor,
     );
   }
 }

@@ -2,8 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import '../../core/theme/nomo_dimensions.dart';
 
-/// Circular progress ring with Bauhaus aesthetics:
-/// thick stroke, butt cap, flat color.
+/// Circular progress ring with rounded caps and smooth appearance.
 class BauhausProgressRing extends StatelessWidget {
   final double progress; // 0.0 – 1.0
   final double size;
@@ -25,7 +24,7 @@ class BauhausProgressRing extends StatelessWidget {
     final theme = Theme.of(context);
     final active = activeColor ?? theme.colorScheme.primary;
     final track =
-        trackColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.1);
+        trackColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.08);
 
     return SizedBox(
       width: size,
@@ -72,7 +71,7 @@ class _RingPainter extends CustomPainter {
       ..color = trackColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.butt;
+      ..strokeCap = StrokeCap.round;
     canvas.drawCircle(center, radius, trackPaint);
 
     // Active arc
@@ -81,7 +80,7 @@ class _RingPainter extends CustomPainter {
         ..color = activeColor
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
-        ..strokeCap = StrokeCap.butt;
+        ..strokeCap = StrokeCap.round;
 
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),

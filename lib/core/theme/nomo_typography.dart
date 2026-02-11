@@ -1,55 +1,57 @@
 import 'package:flutter/material.dart';
 
-/// Bauhaus-inspired typography scale using Noto Sans and Noto Sans Condensed.
+/// Clean, soft typography scale inspired by Apple's design guidelines.
+/// Generous line heights and moderate weights for readability and calm.
 class NomoTypography {
   NomoTypography._();
 
   static const String _fontFamily = 'NotoSans';
   static const String _condensedFamily = 'NotoSansCondensed';
 
-  /// Timer display — Noto Sans Bold 48pt
+  /// Large display — hero numbers, key metrics — 40pt SemiBold
   static const TextStyle display = TextStyle(
     fontFamily: _fontFamily,
-    fontWeight: FontWeight.w700,
-    fontSize: 48,
-    height: 1.1,
+    fontWeight: FontWeight.w600,
+    fontSize: 40,
+    height: 1.15,
     letterSpacing: -0.5,
   );
 
-  /// Smaller display — Noto Sans Bold 32pt
+  /// Medium display — 28pt SemiBold
   static const TextStyle displaySmall = TextStyle(
     fontFamily: _fontFamily,
-    fontWeight: FontWeight.w700,
-    fontSize: 32,
+    fontWeight: FontWeight.w600,
+    fontSize: 28,
     height: 1.2,
     letterSpacing: -0.25,
   );
 
-  /// Section headline — Noto Sans SemiBold 24pt
+  /// Section headline — 22pt SemiBold
   static const TextStyle headline = TextStyle(
     fontFamily: _fontFamily,
     fontWeight: FontWeight.w600,
-    fontSize: 24,
-    height: 1.25,
+    fontSize: 22,
+    height: 1.3,
+    letterSpacing: -0.2,
   );
 
-  /// Card/screen title — Noto Sans Medium 20pt
+  /// Card / screen title — 18pt Medium
   static const TextStyle title = TextStyle(
     fontFamily: _fontFamily,
     fontWeight: FontWeight.w500,
-    fontSize: 20,
-    height: 1.3,
-  );
-
-  /// Smaller title — Noto Sans Medium 16pt
-  static const TextStyle titleSmall = TextStyle(
-    fontFamily: _fontFamily,
-    fontWeight: FontWeight.w500,
-    fontSize: 16,
+    fontSize: 18,
     height: 1.35,
   );
 
-  /// Body text — Noto Sans Regular 16pt
+  /// Smaller title — 15pt Medium
+  static const TextStyle titleSmall = TextStyle(
+    fontFamily: _fontFamily,
+    fontWeight: FontWeight.w500,
+    fontSize: 15,
+    height: 1.4,
+  );
+
+  /// Body text — 16pt Regular
   static const TextStyle body = TextStyle(
     fontFamily: _fontFamily,
     fontWeight: FontWeight.w400,
@@ -57,7 +59,7 @@ class NomoTypography {
     height: 1.5,
   );
 
-  /// Small body text — Noto Sans Regular 14pt
+  /// Small body text — 14pt Regular
   static const TextStyle bodySmall = TextStyle(
     fontFamily: _fontFamily,
     fontWeight: FontWeight.w400,
@@ -65,16 +67,24 @@ class NomoTypography {
     height: 1.45,
   );
 
-  /// Button label — Noto Sans SemiBold 14pt UPPERCASE
+  /// Button / action label — 15pt SemiBold (no forced uppercase)
   static const TextStyle label = TextStyle(
     fontFamily: _fontFamily,
     fontWeight: FontWeight.w600,
-    fontSize: 14,
+    fontSize: 15,
     height: 1.2,
-    letterSpacing: 1.5,
+    letterSpacing: 0.0,
   );
 
-  /// Caption / small labels — Noto Sans Regular 12pt
+  /// Footnote — helper text — 13pt Regular
+  static const TextStyle footnote = TextStyle(
+    fontFamily: _fontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 13,
+    height: 1.4,
+  );
+
+  /// Caption / small labels — 12pt Regular
   static const TextStyle caption = TextStyle(
     fontFamily: _fontFamily,
     fontWeight: FontWeight.w400,
@@ -82,7 +92,7 @@ class NomoTypography {
     height: 1.4,
   );
 
-  /// Condensed counter digits — Noto Sans Condensed Regular 32pt
+  /// Counter digits — Noto Sans Condensed 32pt
   static const TextStyle mono = TextStyle(
     fontFamily: _condensedFamily,
     fontWeight: FontWeight.w400,
@@ -91,7 +101,7 @@ class NomoTypography {
     letterSpacing: 2,
   );
 
-  /// Condensed small — Noto Sans Condensed Regular 20pt
+  /// Condensed small — 20pt
   static const TextStyle monoSmall = TextStyle(
     fontFamily: _condensedFamily,
     fontWeight: FontWeight.w400,

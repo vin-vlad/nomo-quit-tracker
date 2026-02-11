@@ -24,8 +24,8 @@ class AchievementsScreen extends ConsumerWidget {
             color: theme.scaffoldBackgroundColor,
             border: Border(
               bottom: BorderSide(
-                color: theme.colorScheme.onSurface,
-                width: NomoDimensions.borderWidth,
+                color: theme.dividerColor,
+                width: NomoDimensions.dividerWidth,
               ),
             ),
           ),
@@ -38,10 +38,9 @@ class AchievementsScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Text(
-                    'AWARDS',
-                    style: NomoTypography.headline.copyWith(
+                    'Awards',
+                    style: NomoTypography.title.copyWith(
                       color: theme.colorScheme.onSurface,
-                      letterSpacing: 3,
                     ),
                   ),
                 ],
@@ -129,7 +128,7 @@ class AchievementsScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('NICE'),
+            child: const Text('Nice'),
           ),
         ],
       ),
@@ -171,12 +170,12 @@ class _MilestoneBadge extends StatelessWidget {
               border: Border.all(
                 color: isAchieved
                     ? theme.colorScheme.tertiary
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.2),
-                width: 2,
+                    : theme.dividerColor,
+                width: 1.5,
               ),
             ),
             child: isAchieved
-                ? const Icon(Icons.check, color: Colors.black, size: 20)
+                ? Icon(Icons.check, color: theme.colorScheme.onSurface, size: 20)
                 : Center(
                     child: Text(
                       '${(progress * 100).toInt()}%',

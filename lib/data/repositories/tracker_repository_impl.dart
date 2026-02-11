@@ -64,6 +64,11 @@ class TrackerRepositoryImpl implements TrackerRepository {
     return _trackerDao.hasActiveTrackerOfType(addictionTypeId);
   }
 
+  @override
+  Future<void> updateAllCurrencyCodes(String currencyCode) {
+    return _trackerDao.updateAllCurrencyCodes(currencyCode);
+  }
+
   /// Insert a slip record for a tracker.
   Future<void> insertSlip(domain.SlipRecord slip) {
     return _trackerDao.insertSlip(

@@ -37,9 +37,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(NomoDimensions.borderRadius / 2),
+                      borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
                       border: Border.all(
-                        color: theme.colorScheme.onSurface,
+                        color: theme.dividerColor,
                         width: 1.5,
                       ),
                     ),
@@ -115,7 +115,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                           Row(
                             children: [
                               Text(
-                                'YEARLY',
+                                'Yearly',
                                 style: NomoTypography.label.copyWith(
                                   color: theme.colorScheme.onSurface,
                                 ),
@@ -131,9 +131,9 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
-                                  'SAVE 50%',
+                                  'Save 50%',
                                   style: NomoTypography.caption.copyWith(
-                                    color: Colors.black,
+                                    color: theme.colorScheme.onSurface,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 10,
                                   ),
@@ -178,7 +178,7 @@ class _PaywallScreenState extends ConsumerState<PaywallScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'MONTHLY',
+                            'Monthly',
                             style: NomoTypography.label.copyWith(
                               color: theme.colorScheme.onSurface,
                             ),

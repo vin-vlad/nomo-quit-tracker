@@ -270,11 +270,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
           // Quit date
           Text(
-            'QUIT DATE',
+            'Quit date',
             style: NomoTypography.caption.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: NomoDimensions.spacing8),
@@ -328,11 +327,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
           // Currency
           Text(
-            'CURRENCY',
+            'Currency',
             style: NomoTypography.caption.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: NomoDimensions.spacing8),
@@ -356,11 +354,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
           // Daily cost (optional)
           Text(
-            'DAILY COST (OPTIONAL)',
+            'Daily cost (optional)',
             style: NomoTypography.caption.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: NomoDimensions.spacing8),
@@ -380,11 +377,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
           // Daily frequency (optional)
           Text(
-            'DAILY FREQUENCY (OPTIONAL)',
+            'Daily frequency (optional)',
             style: NomoTypography.caption.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: NomoDimensions.spacing8),

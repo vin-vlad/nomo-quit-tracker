@@ -29,8 +29,8 @@ class DashboardScreen extends ConsumerWidget {
             color: theme.scaffoldBackgroundColor,
             border: Border(
               bottom: BorderSide(
-                color: theme.colorScheme.onSurface,
-                width: NomoDimensions.borderWidth,
+                color: theme.dividerColor,
+                width: NomoDimensions.dividerWidth,
               ),
             ),
           ),
@@ -43,10 +43,9 @@ class DashboardScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Text(
-                    AppConstants.appName.toUpperCase(),
-                    style: NomoTypography.headline.copyWith(
+                    AppConstants.appName,
+                    style: NomoTypography.title.copyWith(
                       color: theme.colorScheme.onSurface,
-                      letterSpacing: 3,
                     ),
                   ),
                 ],
@@ -122,7 +121,7 @@ class DashboardScreen extends ConsumerWidget {
         openColor: theme.scaffoldBackgroundColor,
         transitionDuration: const Duration(milliseconds: 500),
         closedShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
+          borderRadius: BorderRadius.circular(28),
         ),
         tappable: false,
         closedBuilder: (closedCtx, openContainer) {
@@ -133,12 +132,7 @@ class DashboardScreen extends ConsumerWidget {
               height: 56,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
-                borderRadius:
-                    BorderRadius.circular(NomoDimensions.borderRadius),
-                border: Border.all(
-                  color: theme.colorScheme.onSurface,
-                  width: NomoDimensions.borderWidth,
-                ),
+                borderRadius: BorderRadius.circular(28),
               ),
               child: const Icon(Icons.add, color: Colors.white, size: 28),
             ),
@@ -164,7 +158,7 @@ class DashboardScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
                 border: Border.all(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  color: theme.dividerColor,
                   width: NomoDimensions.borderWidth,
                 ),
               ),
