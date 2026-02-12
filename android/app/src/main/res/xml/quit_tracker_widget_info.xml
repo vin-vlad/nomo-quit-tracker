@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="110dp"
+    android:minHeight="55dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="55dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="1"
+    android:maxResizeWidth="250dp"
+    android:maxResizeHeight="250dp"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
+    android:configure="com.nomo.nomo.QuitTrackerWidgetConfigActivity"
+    android:previewImage="@mipmap/ic_launcher"
+    android:initialLayout="@layout/quit_tracker_widget_compact" />

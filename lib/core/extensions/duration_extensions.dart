@@ -23,6 +23,16 @@ extension DurationExtensions on Duration {
     return '${s}s';
   }
 
+  /// Formats as "DDd HHh MMm" (no seconds). Use for widgets that update every 60s.
+  String get formattedWithoutSeconds {
+    final d = totalDays;
+    final h = hoursComponent;
+    final m = minutesComponent;
+    if (d > 0) return '${d}d ${h}h ${m}m';
+    if (h > 0) return '${h}h ${m}m';
+    return '${m}m';
+  }
+
   /// Pad a number to 2 digits.
   static String _pad(int n) => n.toString().padLeft(2, '0');
 

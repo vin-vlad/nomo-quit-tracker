@@ -146,8 +146,8 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
                   child: SliderTheme(
                     data: SliderThemeData(
                       activeTrackColor: theme.colorScheme.primary,
-                      inactiveTrackColor:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                      inactiveTrackColor: theme.colorScheme.onSurface
+                          .withValues(alpha: 0.1),
                       thumbColor: theme.colorScheme.primary,
                       thumbShape: const _SquareThumb(),
                       trackHeight: 4,
@@ -157,8 +157,7 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
                       min: 1,
                       max: 10,
                       divisions: 9,
-                      onChanged: (v) =>
-                          setState(() => _intensity = v.round()),
+                      onChanged: (v) => setState(() => _intensity = v.round()),
                     ),
                   ),
                 ),
@@ -175,11 +174,10 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
                     vertical: NomoDimensions.spacing4,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
-                    border: Border.all(
-                      color: theme.dividerColor,
-                      width: 1.5,
+                    borderRadius: BorderRadius.circular(
+                      NomoDimensions.borderRadiusSmall,
                     ),
+                    border: Border.all(color: theme.dividerColor, width: 1.5),
                   ),
                   child: Text(
                     '$_intensity',
@@ -218,7 +216,9 @@ class _LogCravingSheetState extends ConsumerState<LogCravingSheet> {
                       color: isSelected
                           ? theme.colorScheme.primary
                           : Colors.transparent,
-                      borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
+                      borderRadius: BorderRadius.circular(
+                        NomoDimensions.borderRadiusSmall,
+                      ),
                       border: Border.all(
                         color: isSelected
                             ? theme.colorScheme.primary
@@ -282,8 +282,7 @@ class _SquareThumb extends SliderComponentShape {
   const _SquareThumb();
 
   @override
-  Size getPreferredSize(bool isEnabled, bool isDiscrete) =>
-      const Size(18, 18);
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) => const Size(18, 18);
 
   @override
   void paint(

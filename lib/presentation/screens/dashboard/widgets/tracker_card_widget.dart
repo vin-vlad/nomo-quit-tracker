@@ -48,7 +48,9 @@ class TrackerCardWidget extends ConsumerWidget {
                 ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary,
-                  borderRadius: BorderRadius.circular(NomoDimensions.borderRadiusSmall),
+                  borderRadius: BorderRadius.circular(
+                    NomoDimensions.borderRadiusSmall,
+                  ),
                 ),
                 child: Text(
                   '${tracker.elapsed.inDays}d',
@@ -65,10 +67,7 @@ class TrackerCardWidget extends ConsumerWidget {
 
           // Animated counter
           Center(
-            child: AnimatedCounter(
-              quitDate: tracker.quitDate,
-              compact: true,
-            ),
+            child: AnimatedCounter(quitDate: tracker.quitDate, compact: true),
           ),
 
           const SizedBox(height: NomoDimensions.spacing16),

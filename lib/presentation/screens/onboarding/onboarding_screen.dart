@@ -91,10 +91,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     final settingsRepo = ref.read(settingsRepositoryProvider);
     final settings = await settingsRepo.getSettings();
-    await settingsRepo.updateSettings(settings.copyWith(
-      hasCompletedOnboarding: true,
-      currencyCode: _currency,
-    ));
+    await settingsRepo.updateSettings(
+      settings.copyWith(hasCompletedOnboarding: true, currencyCode: _currency),
+    );
 
     if (mounted) context.go('/dashboard');
   }
@@ -336,14 +335,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           const SizedBox(height: NomoDimensions.spacing8),
           DropdownButtonFormField<String>(
             initialValue: _currency,
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-            ),
+            decoration: const InputDecoration(border: UnderlineInputBorder()),
             items: CurrencyUtils.currencies
-                .map((c) => DropdownMenuItem(
-                      value: c.code,
-                      child: Text('${c.symbol} ${c.code}'),
-                    ))
+                .map(
+                  (c) => DropdownMenuItem(
+                    value: c.code,
+                    child: Text('${c.symbol} ${c.code}'),
+                  ),
+                )
                 .toList(),
             onChanged: (v) {
               if (v != null) setState(() => _currency = v);

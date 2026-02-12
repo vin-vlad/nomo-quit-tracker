@@ -203,9 +203,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'tracker/:id',
-                    builder: (context, state) => TrackerDetailScreen(
-                      trackerId: state.pathParameters['id']!,
-                    ),
+                    builder: (context, state) {
+                      final openLogCraving = state.uri.queryParameters['openLogCraving'] == 'true';
+                      return TrackerDetailScreen(
+                        trackerId: state.pathParameters['id']!,
+                        openLogCravingOnBuild: openLogCraving,
+                      );
+                    },
                     routes: [
                       GoRoute(
                         path: 'insights',

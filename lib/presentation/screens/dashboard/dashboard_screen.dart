@@ -110,9 +110,7 @@ class DashboardScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(
-          child: Text('Error loading trackers: $e'),
-        ),
+        error: (e, _) => Center(child: Text('Error loading trackers: $e')),
       ),
       floatingActionButton: OpenContainer(
         closedElevation: 0,
@@ -156,7 +154,9 @@ class DashboardScreen extends ConsumerWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(NomoDimensions.borderRadius),
+                borderRadius: BorderRadius.circular(
+                  NomoDimensions.borderRadius,
+                ),
                 border: Border.all(
                   color: theme.dividerColor,
                   width: NomoDimensions.borderWidth,
@@ -205,15 +205,16 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   void _showCravingSheet(
-      BuildContext context, WidgetRef ref, String trackerId) {
+    BuildContext context,
+    WidgetRef ref,
+    String trackerId,
+  ) {
     final isPremium = ref.read(isPremiumSyncProvider);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => LogCravingSheet(
-        trackerId: trackerId,
-        isPremium: isPremium,
-      ),
+      builder: (ctx) =>
+          LogCravingSheet(trackerId: trackerId, isPremium: isPremium),
     );
   }
 

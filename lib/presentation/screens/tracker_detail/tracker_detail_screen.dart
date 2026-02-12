@@ -21,17 +21,31 @@ import '../../widgets/bauhaus_progress_ring.dart';
 import '../craving/log_craving_sheet.dart';
 import '../insights/tracker_insights_screen.dart';
 
-class TrackerDetailScreen extends ConsumerWidget {
+class TrackerDetailScreen extends ConsumerStatefulWidget {
   final String trackerId;
+  final bool openLogCravingOnBuild;
 
-  const TrackerDetailScreen({super.key, required this.trackerId});
+  const TrackerDetailScreen({
+    super.key,
+    required this.trackerId,
+    this.openLogCravingOnBuild = false,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TrackerDetailScreen> createState() =>
+      _TrackerDetailScreenState();
+}
+
+class _TrackerDetailScreenState extends ConsumerState<TrackerDetailScreen> {
+  bool _hasOpenedLogCravingFromDeepLink = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final ref = this.ref;
     final theme = Theme.of(context);
-    final trackerAsync = ref.watch(trackerByIdProvider(trackerId));
-    final cravingsAsync = ref.watch(cravingsByTrackerProvider(trackerId));
-    final slipsAsync = ref.watch(slipsByTrackerProvider(trackerId));
+    final trackerAsync = ref.watch(trackerByIdProvider(widget.trackerId));
+    final cravingsAsync = ref.watch(cravingsByTrackerProvider(widget.trackerId));
+    final slipsAsync = ref.watch(slipsByTrackerProvider(widget.trackerId));
     final isPremium = ref.watch(isPremiumSyncProvider);
 
     return trackerAsync.when(
@@ -55,6 +69,14 @@ class TrackerDetailScreen extends ConsumerWidget {
         final nextMilestone = evaluator.nextTimeMilestone(elapsed);
         final cravingCount = cravingsAsync.valueOrNull?.length ?? 0;
         final slipCount = slipsAsync.valueOrNull?.length ?? 0;
+
+        if (widget.openLogCravingOnBuild && !_hasOpenedLogCravingFromDeepLink) {
+          _hasOpenedLogCravingFromDeepLink = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            _logCraving(context, ref);
+          });
+        }
 
         return Scaffold(
           appBar: BauhausAppBar(title: tracker.name),
@@ -348,7 +370,7 @@ class TrackerDetailScreen extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       builder: (ctx) => LogCravingSheet(
-        trackerId: trackerId,
+        trackerId: widget.trackerId,
         isPremium: isPremium,
       ),
     );
@@ -403,7 +425,7 @@ class TrackerDetailScreen extends ConsumerWidget {
                 onPressed: () async {
                   final slip = domain.SlipRecord(
                     id: const Uuid().v4(),
-                    trackerId: trackerId,
+                    trackerId: widget.trackerId,
                     timestamp: DateTime.now(),
                     note: noteController.text.isEmpty
                         ? null
@@ -451,7 +473,7 @@ class TrackerDetailScreen extends ConsumerWidget {
             ),
             onPressed: () async {
               final repo = ref.read(trackerRepositoryProvider);
-              final current = await repo.getById(trackerId);
+              final current = await repo.getById(widget.trackerId);
               if (current != null) {
                 final updated = current.copyWith(
                   quitDate: DateTime.now(),
